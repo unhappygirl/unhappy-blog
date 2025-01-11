@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+
+
+<html>
+
+<script id="abide">
+    function hide(light) {
+        var p1 = document.getElementById("Meta");
+        var p2 = document.getElementById("BAŞKAN");
+        if (light == 1) {
+            p1.innerHTML = "fun is INFINITE";
+            p2.innerHTML = "DEATH";
+        }
+        else {
+            p1.innerHTML = "Merhaba! Ben burzum, bu da:\nbAŞKANÄ̷̗̮͎̫͖̪̞͙͉̱̤̆͂̄͒͗̽͗̈́̆͋̾̄͜͝ͅN̵͕̠̭̟͍̼̯͚̺̰̾Ȧ̵̢͕̺̝̰̥̠̙̫̟̻͕͗͛̈́͂͠N̷̛̤̹̦̤̖̣̙̲̹͍̬̘͎̗͎̾̉̾̔̏̇̄̇̒̓͐̈́Q̵̡̩̞͉̪̣̹̅̉̑̈́͛͒̃̈́́́̅̊̆̒̚ͅẈ̵̡͖̭̞̙̱̐̒̓͛̄͆̓͋̔̅̎ͅX̸̛̬̫̀̽͗́̆͛͌̀͜͝X̵̛̠̰̣̦̘͈̯̼̦̄̒̐̉̀́̅̈́̒̚X̶̢̢̧͉̪̞̥̫̫͖͈̳̙̑̿̔͛̾͗́͐̑̊ͅX̵̧̧̮͍͈͙̱͓͖̌̉͜.̶̝̲̈́̂͋̑̆̈̽̓̋̏͘͘͘͜͝A̷̡̢̧̧̧̨͕̟̯͎͉̭̺͋̉̊̓̆͊͆͒̋̽̓͝Ṡ̴͎͕̞̦͙͇̰̦̱̝̜̈́̄Ẅ̴̢̛͈͚̺̞̞̜̻́̂̈́̽̃͑͛͐̒̈́͑͝͝Q̵̧͙̝̫̯̰̭̍͛̊̂͠"
+            p2.innerHTML = "BAŞKAN"
+        }
+
+    }
+
+    function abide(Audio=null) {
+        var img = document.getElementById("başkan");
+        var style = document.getElementById("style");
+        var par = document.getElementById("cus");
+        var light = img.alt;
+        const au = document.getElementById("glare")
+
+        if (light == 1) {
+            img.src = "static/img/dark_başkan.jpg"
+            img.alt = 0;
+            style.href = "static/css/death.css"
+            par.innerHTML = "<button type='button' onclick='abide()'><br />ABIDE</button><br />Well done, my child; BAŞKAN is very proud! the next instructions will be on 48.8584° N, 2.2945° E REDACTED"
+            au.play();
+        }
+        else {
+            img.src = "static/img/başkan.jpg"
+            img.alt = 1;
+            style.href = "static/css/style.css"
+            par.innerHTML = "<button type='button' onclick='abide()'>ABIDE</button><br />Unlngvzqn uvp zhgyh bynznqvz, lnfnqvtvz ure fnavlr ove pruraarz ir öyüzüa xheghyhş byqhğhan ove vşnerg. Oraqra öearx nyıa; çbphxyneız, IR LÜXRFRYİA."
+            au.pause();
+        }
+        hide(light)
+    }
+
+</script>
+
+
+
+<header>
+    <p id="Meta">
+        Merhaba! Ben burzum, bu da:
+        bAŞKANÄ̷̗̮͎̫͖̪̞͙͉̱̤̆͂̄͒͗̽͗̈́̆͋̾̄͜͝ͅN̵͕̠̭̟͍̼̯͚̺̰̾Ȧ̵̢͕̺̝̰̥̠̙̫̟̻͕͗͛̈́͂͠N̷̛̤̹̦̤̖̣̙̲̹͍̬̘͎̗͎̾̉̾̔̏̇̄̇̒̓͐̈́Q̵̡̩̞͉̪̣̹̅̉̑̈́͛͒̃̈́́́̅̊̆̒̚ͅẈ̵̡͖̭̞̙̱̐̒̓͛̄͆̓͋̔̅̎ͅX̸̛̬̫̀̽͗́̆͛͌̀͜͝X̵̛̠̰̣̦̘͈̯̼̦̄̒̐̉̀́̅̈́̒̚X̶̢̢̧͉̪̞̥̫̫͖͈̳̙̑̿̔͛̾͗́͐̑̊ͅX̵̧̧̮͍͈͙̱͓͖̌̉͜.̶̝̲̈́̂͋̑̆̈̽̓̋̏͘͘͘͜͝A̷̡̢̧̧̧̨͕̟̯͎͉̭̺͋̉̊̓̆͊͆͒̋̽̓͝Ṡ̴͎͕̞̦͙͇̰̦̱̝̜̈́̄Ẅ̴̢̛͈͚̺̞̞̜̻́̂̈́̽̃͑͛͐̒̈́͑͝͝Q̵̧͙̝̫̯̰̭̍͛̊̂͠
+    </p>
+</header>
+
+<body>
+    <link id="style" type="text/css" rel="stylesheet" href="static/css/style.css">
+    <p1 id="BAŞKAN"> BAŞKAN </p1>
+
+    <p>
+        <img id=başkan src="static/img/başkan.jpg" alt=1 style="height: 300px; width: 400 px;">
+    </p>
+
+    <p2 id="cus">
+        <button type="button" onclick="abide()">ABIDE</button><br />
+
+        Unlngvzqn uvp zhgyh bynznqvz, lnfnqvtvz ure fnavlr ove pruraarz ir öyüzüa xheghyhş byqhğhan ove vşnerg.
+        Oraqra öearx nyıa; çbphxyneız, IR LÜXRFRYİA. <br> Also don't forget to check out my take on <a href="/graphics"> computer graphics </a> </br>
+
+    </p2>
+
+    <div class="fun"> 
+        <img id="fun" src="static/img/fun.png" style="height: 50px; width: 50px;">
+    </div>
+
+    <div class="au">
+        <audio controls id="glare">
+            <source src="static/fun.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+</body>
+
+
+</html>
