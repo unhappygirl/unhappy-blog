@@ -5,13 +5,21 @@ from flask import *
 app = Flask(__name__)
 
 
-@app.route("/")
+@app.route("/baskan03321_")
 def index():
-    return render_template("index.html")
+    return render_template("baskan.html")
 
-@app.route("/graphics")
+@app.route("/graphics_legacy")
 def graphics():
     return render_template("cg.html")
+
+@app.route("/perspective")
+def graphics():
+    return render_template("cg.html")
+
+@app.route("/")
+def graphics():
+    return graphics()
 
 
 if __name__ == "__main__":
