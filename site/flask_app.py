@@ -18,7 +18,7 @@ def graphics():
     return render_template("cg.html")
 
 @app.route("/")
-def graphics():
+def index():
     return graphics()
 
 
