@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 
 @app.route("/baskan03321_")
-def index():
+def baskan():
     return render_template("baskan.html")
 
 @app.route("/graphics_legacy")
