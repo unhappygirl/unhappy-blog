@@ -15,7 +15,7 @@ def graphics():
 
 @app.route("/perspective")
 def perspective():
-    return render_template("cg.html")
+    return render_template("index.html")
 
 @app.route("/")
 def index():
