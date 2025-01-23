@@ -1,9 +1,10 @@
 
 
 class LineSegment {
-  constructor(p1, p2) {
+  constructor(p1, p2, color) {
     this.p1 = math.matrix(p1);
     this.p2 = math.matrix(p2);
+    this.color = color;
     this.length = math.norm(math.subtract(this.p2, this.p1))
     this.known_point = this.p1;
     this.direction = this.init_direction();
