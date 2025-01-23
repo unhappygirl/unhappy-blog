@@ -1,6 +1,8 @@
 const ORIGIN = math.matrix([0, 0]);
 const BASIS = [math.matrix([1, 0]), math.matrix([0, 1])];
 
+var M_projection;
+
 function segment_collision(ls1, ls2) {
   const diff = math.subtract(ls2.known_point, ls1.known_point);
   const comatrix = math.matrix([
@@ -38,7 +40,7 @@ function projection_matrix2D(camera_pos, camera_direction, viewport_distance) {
 class Viewport2D extends LineSegment {
   perspective_project(observer, point) {
     let homo = math.matrix([...point.toArray(), 1]);
-    var M_projection = projection_matrix2D(
+    M_projection = projection_matrix2D(
       observer.pos,
       observer.view_dir,
       observer.d

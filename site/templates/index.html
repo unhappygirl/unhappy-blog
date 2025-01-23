@@ -3,6 +3,7 @@
 
 <head>
     <!-- scripts -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.0.1/math.min.js></script>
     <script src="static/js/aux.js"></script>
     <script src="static/js/_types.js"></script>
@@ -13,9 +14,50 @@
 </head>
 
 <body>
+
+    <h>
+        Burzum's take on Computer Graphics
+    </h>
+    
+    <div class="textChunk">
+        <p> Hello, beautiful people of the internet! I am Burzum. Today I want to delve into
+            how video games, or computers in general, simulate our perception, using technologies such as:
+            perspective projections, texture mapping, shading models (like gourard), raytracing and whatnot.
+        </p>
+
+        <p>
+            Don't be intimitated! If you don't have a huge mathematical background, it is fine. I will try to be as
+            simple as possible.
+        </p>
+    </div>
+
     <div class="canvasContainer">
         <label for="2Dprojectives">2D Projection!</label>
         <canvas id="2Dprojective" width="500" height="500"></canvas>
+    </div>
+    <div class="matrixContainer">
+        <label id="projection-matrix">\begin{bmatrix}a & b & c\\d & e & f\\ g & h & i \end{bmatrix}</label>
+        <script>
+            async function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            async function dynamicMatrix() {
+                while (true) {
+                    await sleep(100)
+                    let label = document.getElementById("projection-matrix")
+                    const [r1, r2, r3] = M_projection.rows();
+                    label.innerText = 
+                    `\$\$P' = \\begin{bmatrix}
+                        ${r1.get([0, 0]).toFixed(4)} & ${r1.get([0, 1]).toFixed(4)} & ${r1.get([0, 2]).toFixed(4)}
+                        \\\\${r2.get([0, 0]).toFixed(4)} & ${r2.get([0, 1]).toFixed(4)} & ${r2.get([0, 2]).toFixed(4)}
+                        \\\\ ${r3.get([0, 0]).toFixed(4)} & ${r3.get([0, 1]).toFixed(4)} & ${r1.get([0, 2]).toFixed(4)} 
+                    \\end{bmatrix} \\cdot \\ P\$\$`
+                    MathJax.typeset()
+                }
+            }
+            dynamicMatrix();
+            
+        </script>
     </div>
     <div class="canvasContainer">
         <label for="3Dprojective">Adding another dimension... </label>
@@ -24,11 +66,5 @@
     <script src="static/js/canvasController.js"></script>
 
     <div class="textChunk">
-        <p>
-            Have you ever wondered why things get smaller as they move away? <br>
-            Have you ever wondered how games simulate our vision? <br>
-            How it all looks so believable, as if you were there? <br>
-            How you seem to actually look left when you move your mouse to the left? <br>
-        </p>
     </div>
 </body> 

@@ -45,7 +45,7 @@ class Controller {
         this.observer.arrived = false;
         this.observer_moving = true;
         this.move_lock = true;
-        this.observer_destination = random_coordinates([[200, 400], [200, 400]])
+        this.observer_destination = random_coordinates([[100, 300], [100, 300]])
       }
     }
 
@@ -68,17 +68,20 @@ class Controller {
 }
 
 class Controller3D {
-  constructor(canvas_object, ) {}
+  constructor(canvas_object) {
+    this.ctx = canvas_object.getContext("webgl");
+    this
+  }
 }
 
 function main() {
   const _2Dcanvas = document.getElementById("2Dprojective");
   const mycontroller = new Controller(_2Dcanvas, "2d", );
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 3; i++) {
     mycontroller.lines.push(
       random_line_segment([
-        [100, 500],
-        [100, 500],
+        [200, 500],
+        [200, 500],
       ])
     );
   }

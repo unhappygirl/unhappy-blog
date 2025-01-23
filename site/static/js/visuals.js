@@ -14,27 +14,6 @@ const COLORS = [
   "brown",
   "gray",
   "pink",
-  "lightblue",
-  "lightgreen",
-  "lightyellow",
-  "lightgray",
-  "lightpink",
-  "lightbrown",
-  "lightcyan",
-  "lightpurple",
-  "lightorange",
-  "lightmagenta",
-  "lightred",
-  "darkred",
-  "darkblue",
-  "darkgreen",
-  "darkorange",
-  "darkmagenta",
-  "darkcyan",
-  "darkpurple",
-  "darkyellow",
-  "darkgray",
-  "darkbrown",
   "white",
   "teal",
   "navy",
@@ -166,7 +145,7 @@ function draw_observer(ctx, observer) {
   for (const i in observer.rays) {
     const ray = observer.rays[i];
     latter = i > 1
-    draw_ray(ctx, ray, latter ? "gray" : undefined, (dotted = latter));
+    draw_ray(ctx, ray, latter ? "lightgray" : undefined, (dotted = latter));
   }
 }
 
