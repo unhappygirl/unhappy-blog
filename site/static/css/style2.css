@@ -60,7 +60,6 @@ canvas {
 /* Text Chunk Styling */
 .textChunk {
     max-width:500px;
-    text-size-adjust: 20%;
     background-color: #e27cb3;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
