@@ -19,7 +19,7 @@ def perspective():
 
 @app.route("/")
 def index():
-    return graphics()
+    return perspective()
 
 
 if __name__ == "__main__":
