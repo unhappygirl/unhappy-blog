@@ -71,7 +71,7 @@ canvas {
 .textChunk p {
     line-height: 1.8;
     color: #000000;
-    font-size: smaller;
+    font-size: medium;
     margin-bottom: 25px;
 }
 
