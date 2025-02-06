@@ -62,15 +62,7 @@ class Controller {
     //console.log(this.time, "seconds have passed.");
     this.clear();
     this.draw();
-    //this.observer.displace([-0.1, 0])
     window.requestAnimationFrame((time) => this.mainloop(time));
-  }
-}
-
-class Controller3D {
-  constructor(canvas_object) {
-    this.ctx = canvas_object.getContext("webgl");
-    this
   }
 }
 

@@ -7,173 +7,226 @@
     <!-- scripts -->
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.0.1/math.min.js></script>
-    <script src="static/js/aux.js"></script>
-    <script src="static/js/_types.js"></script>
-    <script src="static/js/projections.js"></script>
-    <script src="static/js/visuals.js"></script>
+    <script src="static/js/2D/aux.js"></script>
+    <script src="static/js/2D/_types.js"></script>
+    <script src="static/js/2D/projections.js"></script>
+    <script src="static/js/2D/visuals.js"></script>
     <!---->
     <link rel="stylesheet" href="static/css/style2.css">
 </head>
 
-<body>
+    <body>
 
-    <h>
-        Burzum's take on Computer Graphics
-    </h>
-    
-    <div class="textChunk">
-        <p> Hello, beautiful people of the internet! I am Burzum. Today I want to delve into
-            how video games, or computers in general, simulate our perception, using technologies such as:
-            perspective projections, texture mapping, shading models (like gourard), raytracing and whatnot.
-        </p>
+        <h>
+            Burzum's take on Computer Graphics (The CEO of machineWai!)
+        </h>
+        
+        <div class="textChunk">
+            <p> Hello, beautiful people of the internet! I am Burzum. Today I want to delve into
+                how video games, or computers in general, simulate our perception, using technologies such as:
+                perspective projections, texture mapping, shading models (like gourard), raytracing and whatnot.
+            </p>
 
-        <p>
-            Don't be intimitated! If you don't have a huge mathematical background, it is fine. I will try to be as
-            simple as possible. <br>
-            if you are interested in visiting my old and embarassing attempt: <a href="/graphics_legacy"> link </a>
-        </p>
-    </div>
+            <p>
+                Don't be intimitated! If you don't have a huge mathematical background, it is fine. I will try to be as
+                simple as possible. <br>
+                if you are interested in visiting my old and embarassing attempt: <a href="/graphics_legacy"> link </a>
+            </p>
+        </div>
 
-    <div class="imgContainer">
-        <img src="https://df0b18phdhzpx.cloudfront.net/ckeditor_assets/pictures/1460249/original_Untitled_%286%29.png" alt="eye">
-        <label> the projection of the eye </label>
-    </div>
+        <div class="imgContainer">
+            <img src="https://df0b18phdhzpx.cloudfront.net/ckeditor_assets/pictures/1460249/original_Untitled_%286%29.png" alt="eye">
+            <label> the projection of the eye </label>
+        </div>
 
-    <div class="textChunk">
-        <h> Introduction </h>
-        <p>
-            The human vision works as follows: light coming from an object is projected on the curvature
-            of the back of the eye, and our brain flips it and accounts for the curvature,
-            making it flat (mostly). This in fact, is equivalent to perspective projection.
+        <div class="textChunk">
+            <h> Introduction </h>
+            <p>
+                The human vision works as follows: light coming from an object is projected on the curvature
+                of the back of the eye, and our brain flips it and accounts for the curvature,
+                making it flat (mostly). This in fact, is equivalent to perspective projection.
 
-            There are other type of projections, which be later discuessed (WIP).
+                There are other type of projections, which be later discuessed (WIP).
 
-        </p>
+            </p>
 
-        <p>
-            Perspective projection is a type of transformation.
-            A transformation is esentially a change done to a point, with a specific geometrical operation in mind.
-            For example consider the point: $$P = (2, 3)$$
-            We can translate, or move this point to the left: \(P' = (0, 3)\)
-            And therefore, we transformed it, we have obtained a point from another by doing something to it, in this case translation.
-            <br>
-            Perspective projection is esentially the same thing.
-            We take a point and transform it so that it is projected on something, in our case it will be a plane.
-            But to sake of simplicity, let's start with \(R^2\) (2D).
-        </p>
-    </div>
-    <div class="canvasContainer">
-        <label for="2Dprojectives">2D Projection!</label>
-        <canvas id="2Dprojective" width="500" height="500"></canvas>
-    </div>
-    <div class="matrixContainer">
-        <label id="projection-matrix">\begin{bmatrix}a & b & c\\d & e & f\\ g & h & i \end{bmatrix}</label>
-        <script>
-            async function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
-            async function dynamicMatrix() {
-                while (true) {
-                    await sleep(100)
-                    let label = document.getElementById("projection-matrix")
-                    const [r1, r2, r3] = M_projection.rows();
-                    label.innerText = 
-                    `\$\$P' = \\begin{bmatrix}
-                        ${r1.get([0, 0]).toFixed(4)} & ${r1.get([0, 1]).toFixed(4)} & ${r1.get([0, 2]).toFixed(4)}
-                        \\\\${r2.get([0, 0]).toFixed(4)} & ${r2.get([0, 1]).toFixed(4)} & ${r2.get([0, 2]).toFixed(4)}
-                        \\\\ ${r3.get([0, 0]).toFixed(4)} & ${r3.get([0, 1]).toFixed(4)} & ${r1.get([0, 2]).toFixed(4)} 
-                    \\end{bmatrix} \\cdot \\ P\$\$`
-                    MathJax.typesetClear([label])
-                    MathJax.typesetPromise([label]).then(() => {
-                        // the new content is has been typeset
-                    });
+            <p>
+                Perspective projection is a type of transformation.
+                A transformation is esentially a change done to a point, with a specific geometrical operation in mind.
+                For example consider the point: $$P = (2, 3)$$
+                We can translate, or move this point to the left: \(P' = (0, 3)\)
+                And therefore, we transformed it, we have obtained a point from another by doing something to it, in this case translation.
+                <br>
+                Perspective projection is esentially the same thing.
+                We take a point and transform it so that it is projected on something, in our case it will be a plane.
+                But to sake of simplicity, let's start with \(R^2\) (2D).
+            </p>
+        </div>
+        <div class="canvasContainer">
+            <label for="2Dprojectives">Behold: 2D projection</label>
+            <canvas id="2Dprojective" width="500" height="500"></canvas>
+        </div>
+        <script src="static/js/2D/canvasController.js"></script>
+        <div class="matrixContainer">
+            <label id="projection-matrix">\begin{bmatrix}a & b & c\\d & e & f\\ g & h & i \end{bmatrix}</label>
+            <script>
+                async function sleep(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
                 }
-            }
-            dynamicMatrix();
-            
-        </script>
-    </div>
+                async function dynamicMatrix() {
+                    while (true) {
+                        await sleep(100)
+                        let label = document.getElementById("projection-matrix")
+                        const [r1, r2, r3] = M_projection.rows();
+                        label.innerText = 
+                        `\$\$P' = \\begin{bmatrix}
+                            ${r1.get([0, 0]).toFixed(4)} & ${r1.get([0, 1]).toFixed(4)} & ${r1.get([0, 2]).toFixed(4)}
+                            \\\\${r2.get([0, 0]).toFixed(4)} & ${r2.get([0, 1]).toFixed(4)} & ${r2.get([0, 2]).toFixed(4)}
+                            \\\\ ${r3.get([0, 0]).toFixed(4)} & ${r3.get([0, 1]).toFixed(4)} & ${r1.get([0, 2]).toFixed(4)} 
+                        \\end{bmatrix} \\cdot \\ P\$\$`
+                        MathJax.typesetClear([label])
+                        MathJax.typesetPromise([label]).then(() => {
+                            console.log("type set update finished.")
+                        });
+                    }
+                }
+                dynamicMatrix();
+                
+            </script>
+        </div>
 
-    <div class="textChunk">
-        <h> Matrices </h>
-        <div class="note"> 
-            <label>
-                if you aren't familiar at all with matrices:<br>
-                <a href="https://www.mathsisfun.com/algebra/matrix-introduction.html">this</a> can be helpful.
-            </label> 
-        </div>  
-        <p>
-            A matrix is a 2 dimensional collection of numbers, and is used to transform points.
-            For example: $$P = I_2 \cdot P$$
-            where \(I_2\) is the 2 dimensional identity matrix:
-            $$ I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $$
-            Why matrices? Your GPU is very good at parallelization. <br>
-            Let's say we are multiplying a 3x3 matrix with a 1x3 column matrix, we need 3 entries for the resultant column matrix,
-            which are entirely independent of each other. Esentially, we need 3 dot independent products, which is just repetitive addition; relatively simple in terms of computation.
-            Another reason is integrity: for every point if we can find a transformation matrix, we will just multiply every point with 
-            the same matrix, no questions asked! You can start to understand why it is advantagous to use matrices.
-            <br>
-            <br>
-            Above, you see a homogenous point being transformed via a 3x3 matrix.
-            2 dimensional points can't be projectively transformed with 2x2 matrices,
-            as projective transformations aren't affine transformations: they don't preserve distances!
-            We will use what is called homogenous coordinates.
-        </p> 
-        <h> Projective geometry </h>
-        <p>
-            Projective geometry is a very abstract type of geometry that needs rigorous understanding.
-            I will absolutely not delve into the details of it, however we will borrow the coordinate system that is associated with it:
-            As said, homogenous coordinates. Why not cartesia coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
-            via matrices. But how can homogenous coordinates can be? Let's see.
-            A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
-            $$P_0 \sim \lambda \cdot P_1, \ \lambda \ne 0$$
-            Which are "points" on that projective plane.
-            what does this mean? <br>
-            It means, roughly speaking, each projective line (euclidean lines going through the origin) is a "point" on this projective space.
-            For some reference, consider the homogenous coordinate \(x\): 
-            $$
-            P = [1: 1: 2] \equiv [2: 2: 4] \equiv [4: 4: 8]
-            $$
+        <div class="textChunk">
+            <h> Matrices </h>
+            <div class="note"> 
+                <label>
+                    if you aren't familiar at all with matrices:<br>
+                    <a href="https://www.mathsisfun.com/algebra/matrix-introduction.html">this</a> can be helpful.
+                </label> 
+            </div>  
+            <p>
+                A matrix is a 2 dimensional collection of numbers, and is used to transform points.
+                For example: $$P = I_2 \cdot P$$
+                where \(I_2\) is the 2 dimensional identity matrix:
+                $$ I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $$
+                Why matrices? Your GPU is very good at parallelization. <br>
+                Let's say we are multiplying a 3x3 matrix with a 1x3 column matrix, we need 3 entries for the resultant column matrix,
+                which are entirely independent of each other. Esentially, we need 3 dot independent products, which is just repetitive addition; relatively simple in terms of computation.
+                Another reason is integrity: for every point if we can find a transformation matrix, we will just multiply every point with 
+                the same matrix, no questions asked! You can start to understand why it is advantagous to use matrices.
+                <br>
+                <br>
+                Above, you see a homogenous point being transformed via a 3x3 matrix.
+                2 dimensional points can't be projectively transformed with 2x2 matrices,
+                as projective transformations aren't affine transformations: they don't preserve distances!
+                We will use what is called homogenous coordinates.
+            </p> 
+            <h> Projective geometry </h>
+            <p>
+                Projective geometry is a very abstract type of geometry that needs rigorous understanding.
+                I will absolutely not delve into the details of it, however we will borrow the coordinate system that is associated with it:
+                As said, homogenous coordinates. Why not cartesia coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
+                via matrices. But how can homogenous coordinates can be? Let's see.
+                A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
+                $$P_0 \sim \lambda \cdot P_1, \ \lambda \ne 0$$
+                Which are "points" on that projective plane.
+                what does this mean? <br>
+                It means, roughly speaking, each projective line (euclidean lines going through the origin) is a "point" on this projective space.
+                For some reference, consider the homogenous coordinate \(x\): 
+                $$
+                P = [1: 1: 2] \equiv [2: 2: 4] \equiv [4: 4: 8]
+                $$
 
-            In general:
-            $$ [x: y: w] \equiv [\lambda x: \lambda y: \lambda w], \lambda \in F_{\mathbb{P}^2} $$
+                In general:
+                $$ [x: y: w] \equiv [\lambda x: \lambda y: \lambda w], \lambda \in F_{\mathbb{P}^2} $$
 
-            And a corresponding cartesian coordinate can be obtained via the operation:
+                And a corresponding cartesian coordinate can be obtained via the operation:
 
-            $$ P_{\mathbb{R}^2} = \bigg(\frac{x}{w}, \frac{y}{w}\bigg)  \equiv [x: y: w] \cdot \frac{1}{w} $$
+                $$ P_{\mathbb{R}^2} = \bigg(\frac{x}{w}, \frac{y}{w}\bigg)  \equiv [x: y: w] \cdot \frac{1}{w} $$
 
-            Let's say I want to project any point \(P \) onto the line \(x = d \): <br>
+                Let's say I want to project any point \(P \) onto the line \(x = d \): <br>
 
-            It is not hard to see: 
-            $$P' = [d, y_p]^T$$
+                It is not hard to see: 
+                $$P' = [d, y_p]^T$$
 
-            Meaning 
-            $$P' = \frac{dP}{P_x}, \ P = (P_x, \ P_y)$$
+                Meaning 
+                $$P' = \frac{dP}{P_x}, \ P = [P_x, \ P_y]^T$$
 
-            Looks familiar? &#128515
+                Looks familiar? &#128515
 
-            $$ P' \equiv [P_x: P_y: \frac{1}{d}P_x] $$
-            Augmenting \(P\) to homogenous coordinates:
-            $$
-            P' = H \cdot P
-            $$
-            Precisely: 
-            $$
-            P' = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ \frac{1}{d} & 0 & 0 \end{bmatrix} \cdot P
-            $$
-            where \(H\) is the homography matrix.
+                $$ P' \equiv [P_x: P_y: \frac{1}{d}P_x] $$
+                Augmenting \(P\) to homogenous coordinates:
+                $$
+                P' = H \cdot P
+                $$
+                Precisely: 
+                $$
+                P' = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ \frac{1}{d} & 0 & 0 \end{bmatrix} \cdot P
+                $$
+                where \(H\) is the homography matrix. <br>
 
-            
+                This is a projective transformation.
+            </p>
 
-        </p>
+            <div class="note">
+                <label>
+                Note that this matrix is still for transforming 2D cartesian coordinates, even though it is 3x3 itself.
+                the extra column and row accounts for the homogenous part.
+                </label>
+            </div>
 
-    </div>
+            <h> Back to 3D </h>
+            <p>
+                The homography matrix for 3D is very similar, assuming we are projecting points onto
+                the viewport: \( z = 1 \), which is a plane.
+                <br>
+                The operations are really similar, to project a point \( P \), onto the plane, parallel
+                to the xy plane and with distance d to the origin, z = d, we multiply it with
+                the homography (matrix):
 
-    <script src="static/js/canvasController.js"></script>
-    <div class="canvasContainer">
-        <label for="3Dprojective">W.I.P </label>
-        <canvas id="3Dprojective"></canvas>
-    </div>
-    <div class="textChunk">
-    </div>
-</body> 
+                $$ H = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0& 0 & 1 & 0 \\ 0 & 0 & 0 & \frac{1}{d} \end{bmatrix}$$
+            </p>
+        </div>
+
+        <div class="textChunk">
+            <h> Model and View Transformations </h>
+            <p>
+                When you look up, things on the ground go down. e.g, when you
+                look at a car, then look up, the car goes down in your sight and now you are looking
+                at the sky. Look at the top left corner of your screen then look back, these words appeared south-west.
+                It is because within your view space, they really are south-west! Let's formalize this,
+                assuming a left-handed coordinate system,
+                when you are looking at the direction \( \hat{d} \), you have a coordinate system with basis:
+                $$
+                \big( e_1, \  e_2, \ e_3 \big),
+                $$
+                $$
+                e_3 = \hat{d},
+                $$
+                $$
+                e_2 = \hat{d}_{\perp}
+                $$
+                $$
+                e_1 = \hat{d}_{\perp} \times e_3
+                $$
+                relative to the global world space! Transformation to your view space now is trivial:
+                $$
+                P_{view} \mapsto (e_1 \cdot P_{world})e_1 + (e_2 \cdot P_{world})e_1 + (e_2 \cdot P_{world})e_1
+                $$
+
+                or:
+
+                $$
+                P_{view} = \begin{bmatrix} e_1^T \\ e_2^T \\ e_3^T\end{bmatrix} \cdot P_{world}
+                $$
+            </p>
+        </div>
+
+        <script src="static/js/3D/shaders.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix.min.js"></script>
+        <script src="static/js/3D/objparser.js"></script>
+        <div class="canvasContainer">
+            <label for="3Dprojective">W.I.P </label>
+            <canvas id="3Dprojective", width="600", height="600"></canvas>
+        <script src="static/js/3D/webgl.js"></script>
+    </body> 
+</html>

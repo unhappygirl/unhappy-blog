@@ -21,6 +21,14 @@ def perspective():
 def index():
     return perspective()
 
+@app.route("/cow")
+def cow():
+    return open("./static/cow.obj", "rb")
+
+@app.route("/idravawai")
+def wai():
+    return render_template("machinewai.html")
+
 
 if __name__ == "__main__":
     app.run("localhost", 8000)
