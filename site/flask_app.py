@@ -23,7 +23,7 @@ def index():
 
 @app.route("/cow")
 def cow():
-    return open("./static/cow.obj", "rb").read()
+    return open("site/static/cow.obj", "rb").read()
 
 @app.route("/idravawai")
 def wai():
