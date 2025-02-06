@@ -65,6 +65,7 @@ canvas {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-top: 40px;   
+    transition: all 0.2s ease;
 }
 
 .textChunk p {
@@ -85,18 +86,26 @@ canvas {
     text-decoration: underline;
 }
 
+.textChunk:hover {
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);;
+}
+
 .note {
     margin-top: 20px;
     margin-bottom: 20px;
     border: 2px dashed magenta;
-    width: 50%;
-    
+    width: 50%;   
+    transition: all 0.3s ease;
+}
+
+.note:hover {
+    border: 2px dashed #000000;
 }
 
 .note label {
     margin: 8px;
     font-size: xx-small;
-    color: darkslategray;
+    color: whitesmoke;
 }
 
 .imgContainer {
