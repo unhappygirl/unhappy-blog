@@ -5,10 +5,15 @@
     box-sizing: border-box;
 }
 
+header {
+    font-size: large;
+    color: black;
+}
+
 /* Body Styling */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #e27cb3;
+    background-color: salmon;
     color: #ff00ee;
     line-height: 1.6;
     display: flex;
@@ -17,11 +22,6 @@ body {
     justify-content: flex-start;
     height: 100vh;
     padding: 20px;
-}
-
-body h {
-    color: aliceblue;
-    font-family: Snell Roundhand, cursive;
 }
 
 
@@ -48,10 +48,10 @@ label {
 }
 
 canvas {
-    border: 5px solid #15010b;
+    border: 2px solid #15010b;
     border-radius: 8px;
-    background-color:darksalmon;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color:salmon;
+    box-shadow: 0 4px 10px rgba(134, 52, 52, 0.1);
     max-width: 100%;
     max-height: 100%;
     margin-top: 10px;
@@ -59,8 +59,8 @@ canvas {
 
 /* Text Chunk Styling */
 .textChunk {
-    max-width:500px;
-    background-color: #e27cb3;
+    max-width:60%;
+    background-color: salmon;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -78,9 +78,9 @@ canvas {
     margin-bottom: 10px 0;
 }
 
-.textChunk h {
+.textChunk h2 {
     line-height: 1.8;
-    color: antiquewhite;
+    color: orangered;
     padding-bottom: 10px;
     display: inline-block;
     text-decoration: underline;
@@ -91,21 +91,21 @@ canvas {
 }
 
 .note {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: 2px dashed magenta;
-    width: 50%;   
-    transition: all 0.3s ease;
+  border-left: 4px solid #ffa07a;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: darksalmon;
 }
 
 .note:hover {
-    border: 2px dashed #000000;
+    border-left: 4px solid #755244;
 }
 
 .note label {
+    max-width: 50%;
     margin: 8px;
-    font-size: xx-small;
-    color: whitesmoke;
+    font-size: 0.8em;
 }
 
 .imgContainer {
@@ -133,6 +133,10 @@ canvas {
 
 }
 
+footer {
+    color: black;
+}
+
 
 
 /* Responsive Design */
@@ -149,3 +153,6 @@ canvas {
         width: 100%;
     }
 }
+
+
+

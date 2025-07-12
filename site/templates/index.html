@@ -17,30 +17,30 @@
 
     <body>
 
-        <h>
-            Burzum's take on Computer Graphics (The CEO of machineWai!)
-        </h>
+        <header>
+            Burzum's take on Computer Graphics
+        </header>
         
-        <div class="textChunk">
-            <p> Hello, beautiful people of the internet! I am Burzum. Today I want to delve into
+        <section class="textChunk">
+            <p> Hello, beautiful people of the internet! I am Burzum, an idiotic nerd on the internet. In my blog I wanted to delve into
                 how video games, or computers in general, simulate our perception, using technologies such as:
                 perspective projections, texture mapping, shading models (like gourard), raytracing and whatnot.
             </p>
 
             <p>
                 Don't be intimitated! If you don't have a huge mathematical background, it is fine. I will try to be as
-                simple as possible. <br>
-                if you are interested in visiting my old and embarassing attempt: <a href="/graphics_legacy"> link </a>
+                simple as possible. (though some ) <br>
+                if you are interested (I can't think of a reason tbh but) in visiting my old and embarassing attempt: <a href="/graphics_legacy"> link </a>
             </p>
-        </div>
+        </section>
 
-        <div class="imgContainer">
+        <section class="imgContainer">
             <img src="https://df0b18phdhzpx.cloudfront.net/ckeditor_assets/pictures/1460249/original_Untitled_%286%29.png" alt="eye">
             <label> the projection of the eye </label>
-        </div>
+        </section>
 
-        <div class="textChunk">
-            <h> Introduction </h>
+        <section class="textChunk">
+            <h2> Introduction </h2>
             <p>
                 The human vision works as follows: light coming from an object is projected on the curvature
                 of the back of the eye, and our brain flips it and accounts for the curvature,
@@ -61,11 +61,11 @@
                 We take a point and transform it so that it is projected on something, in our case it will be a plane.
                 But to sake of simplicity, let's start with \(R^2\) (2D).
             </p>
-        </div>
-        <div class="canvasContainer">
+        </section>
+        <section class="canvasContainer">
             <label for="2Dprojectives">Behold: 2D projection</label>
             <canvas id="2Dprojective" width="500" height="500"></canvas>
-        </div>
+        </section>
         <script src="static/js/2D/canvasController.js"></script>
         <div class="matrixContainer">
             <label id="projection-matrix">\begin{bmatrix}a & b & c\\d & e & f\\ g & h & i \end{bmatrix}</label>
@@ -95,11 +95,11 @@
             </script>
         </div>
 
-        <div class="textChunk">
-            <h> Matrices </h>
+        <section class="textChunk">
+            <h2> Matrices </h2>
             <div class="note"> 
                 <label>
-                    if you aren't familiar at all with matrices:<br>
+                    if you aren't familiar at all with matrices or vectors:<br>
                     <a href="https://www.mathsisfun.com/algebra/matrix-introduction.html">this</a> can be helpful.
                 </label> 
             </div>  
@@ -120,10 +120,10 @@
                 as projective transformations aren't affine transformations: they don't preserve distances!
                 We will use what is called homogenous coordinates.
             </p> 
-            <h> Projective geometry </h>
+            <h2> Projective geometry </h2>
             <p>
-                Projective geometry is a very abstract type of geometry that needs rigorous understanding.
-                I will absolutely not delve into the details of it, however we will borrow the coordinate system that is associated with it:
+                Projective geometry is a very abstract field of geometry that needs rigorous understanding.
+                I will absolutely not get into the details of it, however we will borrow the coordinate system that is associated with it:
                 As said, homogenous coordinates. Why not cartesia coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
                 via matrices. But how can homogenous coordinates can be? Let's see.
                 A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
@@ -174,7 +174,7 @@
                 </label>
             </div>
 
-            <h> Back to 3D </h>
+            <h2> Back to 3D </h2>
             <p>
                 The homography matrix for 3D is very similar, assuming we are projecting points onto
                 the viewport: \( z = 1 \), which is a plane.
@@ -185,15 +185,75 @@
 
                 $$ H = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0& 0 & 1 & 0 \\ 0 & 0 & 0 & \frac{1}{d} \end{bmatrix}$$
             </p>
-        </div>
+        </section>
 
-        <div class="textChunk">
-            <h> Model and View Transformations </h>
+        <section class="textChunk">
+            <h2>Lines and Their Projections</h2>
+            <p> We all know what lines are, right? &#128515 <br>
+                The most common way of modeling a line is through the equation:
+                $$ mx + c = y $$
+
+                Most of the time though, in computer graphics, we will want to track some attributes of points
+                on a line, so it is very useful to think a line as the expression:
+
+                $$ \vec{P} +  \alpha\hat{u} $$
+
+                Where \(\hat{u}\) is a unit vector in the direction of the line. <br>
+
+                So for example the line \(y=x\) is can be written as \(\ell(\alpha) = \vec{0} + \alpha \langle \frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}} \rangle\).
+                <br>
+
+                Let's say go back to our 2D observer sitting at the origin, with a viewport at \(x = 1\), 
+                we want to (perspective) project the line \(y = f(x)\), on his viewport. 
+                This is merely projecting a line onto another with a reference point, 
+                which can be called a collineation in projective geometry. 
+                It is a bijection from the set of all the points that make up the line \(f(x)\) onto the points
+                on the viewport of the observer. <br> <br>
+
+                Wait, so... what? When we project a line onto another, the projection is another line? Indeed it is, and let's prove it.
+                In our special case, the transformation is:
+                
+                $$ [x: f(x): w] \mapsto [x: f(x): w\cdot x] \equiv [1: \frac{f(x)}{x}: w] $$
+
+                We know that \(f(x)\) is of form: \(mx + c\) so:
+                
+                $$ \frac{f(x)}{x} = m + \frac{c}{x}$$
+
+                and the final form \([1: m + \frac{c}{x}: w]\) is obviously another line:
+
+                $$ \bar{x} = \frac{1}{x} $$
+
+                $$ \bar{f}(\bar{x}) = m + \bar{x}c$$
+
+                But an important fact we must notice that \(\bar{f}(x)\) (not \(\bar{f}(\bar{x})\)) is a hyperbolic function.
+                It esentially means that a change in \(x\) does not equal to linear change in \(\bar{f}(x)\) like it does in \(f(x)\):
+
+                $$ f(x + \delta x) - f(x) = m\delta x \ne \delta \bar{f}(x)$$
+
+                This is an important fact, that is actually the core reason of perspective-correct texturing.
+
+                Let us go back to our vector-like definition of a line:
+                $$ \ell(\alpha) = \vec{P} + \alpha\hat{u} $$ 
+
+                Let's try to project this abstract definition of a line into our sad 1D viewport:
+
+                $$ \frac{\ell(\alpha)}{x} = \frac{\vec{P}}{x_{P}} + \frac{\alpha}{x}\hat{u}$$
+                $$ \ell'(\alpha) = \vec{P}' + \bar{x} \alpha \hat{u}$$
+
+                So \(\ell'\) is linear with respect to \(\bar{x}\alpha\)! How cool is that?
+
+
+            </p>
+        </section>
+
+
+        <section class="textChunk">
+            <h2> Model and View Transformations </h2>
             <p>
                 When you look up, things on the ground go down. e.g, when you
                 look at a car, then look up, the car goes down in your sight and now you are looking
-                at the sky. Look at the top left corner of your screen then look back, these words appeared south-west.
-                It is because within your view space, they really are south-west! Let's formalize this,
+                at the sky. Look at the top left corner of your screen then look back, these words appeared south-east.
+                It is because within your view space, they really are south-east! Let's formalize this,
                 assuming a left-handed coordinate system,
                 when you are looking at the direction \( \hat{d} \), you have a coordinate system with basis:
                 $$
@@ -219,14 +279,24 @@
                 P_{view} = \begin{bmatrix} e_1^T \\ e_2^T \\ e_3^T\end{bmatrix} \cdot P_{world}
                 $$
             </p>
-        </div>
+        </section>
 
         <script src="static/js/3D/shaders.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix.min.js"></script>
         <script src="static/js/3D/objparser.js"></script>
-        <div class="canvasContainer">
+        <section class="canvasContainer">
             <label for="3Dprojective">W.I.P </label>
             <canvas id="3Dprojective", width="600", height="600"></canvas>
+        </section>
         <script src="static/js/3D/webgl.js"></script>
+
+
+        <footer>
+
+        <p>© Burzum. No affine transformations were harmed in the making of this blog.</p>
+
+        </footer>
+        
     </body> 
+    
 </html>

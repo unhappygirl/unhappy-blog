@@ -211,6 +211,7 @@ class webglController {
   }
 
   draw_obj(vertices, faces, pos, color = [1.0, 0.4118, 0.7059, 0.2]) {
+    this.draw_points(vertices);
     this.set_vertices(vertices);
     this.set_indices(faces.map((i) => i - 1)); //indexing starts from 1 in obj files!
     let model = glMatrix.mat4.create();
@@ -250,12 +251,22 @@ class webglController {
       [
         [0.0, 0.0, 0.0],
         [0.0, 0.0, 1.0],
+      ],
+      [1.0, 0.0, 0.0, 1.0]
+    );
+    this.draw_lines(
+      [
         [0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
+      ],
+      [0.0, 1.0, 0.0, 1.0]
+    );
+    this.draw_lines(
+      [
         [0.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
       ],
-      [0.0, 0.0, 0.0, 1.0]
+      [0.0, 0.0, 1.0, 1.0]
     );
     //this.draw_rect([-4, 2, 1], 8, 4);
     this.draw_obj(parser.vertices.flat(), parser.indices.flat(), [-3, 2, 5]);
