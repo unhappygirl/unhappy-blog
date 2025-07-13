@@ -109,14 +109,13 @@ canvas {
 }
 
 .imgContainer {
+    margin-top: 20px;
+    margin-bottom: 20px ;
     display: inline-block;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
     width: 30%;
     height: auto;
-    border-radius: 8px;
-    border: 10px groove pink;
-    margin-top: 60px;
-    margin-bottom: 60px;
+    border-radius: 2px;
     align-items: center;
 }
 
@@ -128,9 +127,12 @@ canvas {
 }
 
 .imgContainer label {
-    font-size: x-small;
+    font-size: xx-small;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
     color: #000000;
-
+    margin-left: 20px;
 }
 
 footer {
