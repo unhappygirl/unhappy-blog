@@ -146,10 +146,11 @@
                 Let's say I want to project any point \(P \) onto the line \(x = d \): <br>
 
                 It is not hard to see: 
-                $$P' = [d, y_p]^T$$
+                $$P' = \begin{bmatrix} d \\ P_y'\end{bmatrix}$$
 
                 Meaning 
-                $$P' = \frac{dP}{P_x}, \ P = [P_x, \ P_y]^T$$
+                $$P' = \frac{d \cdot P}{P_x} $$ where:
+                $$ P = \begin{bmatrix} P_x \\ P_y\end{bmatrix} $$
 
                 Looks familiar? &#128515
 
@@ -196,7 +197,7 @@
                 Most of the time though, in computer graphics, we will want to track some attributes of points
                 on a line, so it is very useful to think a line as the expression:
 
-                $$ \vec{P} +  \alpha\hat{u} $$
+                $$ \vec{P_0} +  \alpha\hat{u} $$
 
                 Where \(\hat{u}\) is a unit vector in the direction of the line. <br>
 
@@ -237,11 +238,25 @@
 
                 Let's try to project this abstract definition of a line into our sad 1D viewport:
 
-                $$ \frac{\ell(\alpha)}{x} = \frac{\vec{P}}{x_{P}} + \frac{\alpha}{x}\hat{u}$$
-                $$ \ell'(\alpha) = \vec{P}' + \bar{x} \alpha \hat{u}$$
 
-                So \(\ell'\) is linear with respect to \(\bar{x}\alpha\)! How cool is that?
+                $$ \ell(\bar{\alpha})' = \frac{\vec{P}}{x_0} + \bar{\alpha}(\alpha) \begin{bmatrix} 0 \\ 1 \end{bmatrix}$$
 
+                $$ = \begin{bmatrix} 1 \\ \frac{y_0}{x_0} + \bar{\alpha}(\alpha) \end{bmatrix}$$
+                Evidently:
+                $$ = \begin{bmatrix} 1 \\ \frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} \end{bmatrix} $$
+                $$ \implies \bar{\alpha} = \frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} - \\ \frac{y_0}{x_0} $$
+                $$ 
+                \implies \ell(\bar{\alpha})' = 
+                \frac{\vec{P}}{x_0} + \biggr(\frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} - \\ \frac{y_0}{x_0}\biggr) \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+                $$
+
+                whew, that is something, huh? <br>
+                Don't worry, this only implies that \(\bar{\alpha}(\alpha)\) is an hyperbolic function,
+                We can convert it back to a linear one, let:
+                $$
+                \omega := \frac{1}{\alpha}
+                $$
+                Then we can say \( \bar{\alpha}(\omega) \) is linear!
 
             </p>
         </section>
@@ -296,7 +311,7 @@
         <p>© Burzum. No affine transformations were harmed in the making of this blog.</p>
 
         </footer>
-        
+
     </body> 
     
 </html>
