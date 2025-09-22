@@ -25,6 +25,10 @@ def index():
 def cow():
     return send_from_directory("static", "cow.obj")
 
+@app.route("/diamond")
+def diamond():
+    return send_from_directory("static", "diamond.obj")
+
 @app.route("/idravawai")
 def wai():
     return render_template("machinewai.html")

@@ -9,7 +9,7 @@ const vertex_shader = `
 
     void main(void) {
         gl_Position = projection * (model_view * vec4(vertex_position, 1.0));
-        gl_PointSize = 1.0;
+        gl_PointSize = 20.0;
     }
 `;
 

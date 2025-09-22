@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
-<head>
-    
+    <meta charset="UTF-8">
+    <head>
+        
 
-    <!-- scripts -->
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.0.1/math.min.js></script>
-    <script src="static/js/2D/aux.js"></script>
-    <script src="static/js/2D/_types.js"></script>
-    <script src="static/js/2D/projections.js"></script>
-    <script src="static/js/2D/visuals.js"></script>
-    <!---->
-    <link rel="stylesheet" href="static/css/style2.css">
-</head>
+        <!-- scripts -->
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.0.1/math.min.js></script>
+        <script src="static/js/2D/aux.js"></script>
+        <script src="static/js/2D/_types.js"></script>
+        <script src="static/js/2D/projections.js"></script>
+        <script src="static/js/2D/visuals.js"></script>
+        <!---->
+        <link rel="stylesheet" href="static/css/style2.css">
+    </head>
 
     <body>
 
@@ -135,14 +135,15 @@
             <p>
                 Projective geometry is a very abstract field of geometry that needs rigorous understanding.
                 I will absolutely not get into the details of it, however we will borrow the coordinate system that is associated with it:
-                As said, homogenous coordinates. Why not cartesia coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
+                As said, homogenous coordinates. Why not cartesian coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
                 via matrices. But how can homogenous coordinates can be? Let's see.
                 A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
                 $$P_0 \sim \lambda \cdot P_1, \ \lambda \ne 0$$
+
                 Which are "points" on that projective plane.
-                what does this mean? <br>
+                What does this fancy stuff actually mean? <br>
                 It means, roughly speaking, each projective line (euclidean lines going through the origin) is a "point" on this projective space.
-                For some reference, consider the homogenous coordinate \(x\): 
+                For reference, consider the homogenous coordinate \(x\): 
                 $$
                 P = [1: 1: 2] \equiv [2: 2: 4] \equiv [4: 4: 8]
                 $$
@@ -156,7 +157,7 @@
 
                 Let's say I want to project any point \(P \) onto the line \(x = d \): <br>
 
-                It is not hard to see: 
+                It is not hard to see that the projected point \(P'\) will have \(d\) as its \(x\) coordinate, since it will be on the line: 
                 $$P' = \begin{bmatrix} d \\ P_y'\end{bmatrix}$$
 
                 Meaning 
@@ -247,27 +248,47 @@
                 Let us go back to our vector-like definition of a line:
                 $$ \ell(\alpha) = \vec{P} + \alpha\hat{u} $$ 
 
-                Let's try to project this abstract definition of a line into our sad 1D viewport:
+                Let's try to project this abstract definition of a line into our 1D viewport \(x = 1\), as this line is
+                completely vertical; needless to say the projected line will also have the direction \(\hat{u}' = [0 \ \ 1]^T\)
 
 
-                $$ \ell(\bar{\alpha})' = \frac{\vec{P}}{x_0} + \bar{\alpha}(\alpha) \begin{bmatrix} 0 \\ 1 \end{bmatrix}$$
+                $$ \ell_{proj}(\bar{\alpha}) = \frac{\vec{P}}{x_0} + \bar{\alpha}(\alpha) \begin{bmatrix} 0 \\ 1 \end{bmatrix}$$
 
                 $$ = \begin{bmatrix} 1 \\ \frac{y_0}{x_0} + \bar{\alpha}(\alpha) \end{bmatrix}$$
                 Evidently:
                 $$ = \begin{bmatrix} 1 \\ \frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} \end{bmatrix} $$
+                Where \( \hat{u} = \hat{i}\cdot u_x + \hat{j}\cdot u_y\),
                 $$ \implies \bar{\alpha} = \frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} - \\ \frac{y_0}{x_0} $$
                 $$ 
-                \implies \ell(\bar{\alpha})' = 
-                \frac{\vec{P}}{x_0} + \biggr(\frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} - \\ \frac{y_0}{x_0}\biggr) \begin{bmatrix} 0 \\ 1 \end{bmatrix}
+                \implies \ell_{proj}(\alpha) = 
+                \frac{\vec{P}}{x_0} + \biggr(\frac{y_0 + \alpha u_y}{x_0 + \alpha u_x} - \\ \frac{y_0}{x_0}\biggr) \begin{bmatrix} 0 \\ 1 \end{bmatrix} \\
+                $$
+                
+                $$
+                = \ell_{proj}(\bar{\alpha}) = \vec{P}' + \bar{\alpha} \begin{bmatrix} 0 \\ 1 \end{bmatrix}
                 $$
 
-                whew, that is something, huh? <br>
-                Don't worry, this only implies that \(\bar{\alpha}(\alpha)\) is an hyperbolic function,
-                We can convert it back to a linear one, let:
+                This means that \(\ell_{proj}\) is linear with respect to \(\bar{\alpha}\). <br>
+                So what did we achieve after all this mathematical rigor? 
+                We found a parameter function we can use to interpolate a projected line on \(x = 1\)! <br>
+                Why do we care? Texture maps are 2 dimensional, meaning that pixels vary linearly, the texture can 
+                be imagined lying on a plane. That is why I said earlier that it is useful to track an attribute that lies on a line.
+                As mentioned, <a href="https://en.wikipedia.org/wiki/Texel_(graphics)">texels</a> lie on a line, 
+                considering a plane is just the analogue of a line in 3 dimensions, it can actually be parametrized very similarly:
+
                 $$
-                \omega := \frac{1}{\alpha}
+                q(\alpha, \beta, \gamma) = \ell_1(\alpha) + \gamma(\ell_2(\alpha) - \ell_1(\beta)), \ \ \gamma \in [0, 1]
                 $$
-                Then we can say \( \bar{\alpha}(\omega) \) is linear!
+
+                So we actually can find the projected plane (on \(x = 1\) for now) and its pixels:
+
+                $$
+                q_{proj}(\bar{\alpha}, \bar{\beta}, \bar{\gamma}) = 
+                \ell_{1_{proj}}(\bar{\alpha}) + \bar{\gamma}(\ell_{2_{proj}}(\bar{\beta}) - \ell_{2_{proj}}(\bar{\alpha}))
+                $$
+
+                using the parameters above. As polygon primitives are usually triangles, barycentric coordinates are 
+                often used instead. <br> We will get on to it later.
 
             </p>
         </section>
@@ -279,14 +300,55 @@
                 When you look up, things on the ground go down. e.g, when you
                 look at a car, then look up, the car goes down in your sight and now you are looking
                 at the sky. Look at the top left corner of your screen then look back, these words appeared south-east.
-                It is because within your view space, they really are south-east! Let's formalize this,
+                It is because within your view space, they really are south-east. 
+                Shortly and more simply, when you rotate your head, your view space changes.
+                And your view space is just where everything exactly in front of your head is on the \(z\) axis.
+                It is just a transformation from one vector space to another:
+                $$
+                V \to V'
+                $$
+
+                It is very advantageous to transform world coordinates to view coordinates and then project 
+                the points onto a viewport. The justification is that it is extremely easier to project a point,
+                say onto a viewport defined as:
+
+                $$
+                z = 1
+                $$
+
+                than to a viewport
+
+                $$
+                z = 2x + y + 5
+                $$
+
+                Which is would actually be the world space equation of your viewport when you rotate your head and then
+                move a little! 
+
+                But, no matter what you do, roll, yaw, pitch, move a light year away from your original position, 
+                your viewport is always defined as \(z = 1\) in your view space (assuming you started with \(z=1\)).
+
+                Notice that your view space does not only change by your rotating your head, you can also move around,
+                a.k.a translate. This one's less tricky: wherever you go the position of your head in world space is the 
+                origin of your view space. So a point \(P_{world}\) at world space is at:
+
+                $$
+                P_{world} - x_{head}
+                $$
+
+
+                <br>
+                <br>
+
+                Let's formalize this,
                 assuming a left-handed coordinate system,
                 when you are looking at the direction \( \hat{d} \), you have a coordinate system with basis:
                 $$
-                \big( e_1, \  e_2, \ e_3 \big),
+                B = \big\{ e_1, \  e_2, \ e_3 \big\}
                 $$
+                where:
                 $$
-                e_3 = \hat{d},
+                e_3 = \hat{d}
                 $$
                 $$
                 e_2 = \hat{d}_{\perp}
@@ -294,9 +356,9 @@
                 $$
                 e_1 = \hat{d}_{\perp} \times e_3
                 $$
-                relative to the global world space! Transformation to your view space now is trivial:
+                relative to the global world space! Transformation to your view is:
                 $$
-                P_{view} \mapsto (e_1 \cdot P_{world})e_1 + (e_2 \cdot P_{world})e_1 + (e_2 \cdot P_{world})e_1
+                P_{view} \mapsto (e_1 \cdot P_{world})e_1 + (e_2 \cdot P_{world})e_2 + (e_3 \cdot P_{world})e_3
                 $$
 
                 or:
@@ -304,8 +366,31 @@
                 $$
                 P_{view} = \begin{bmatrix} e_1^T \\ e_2^T \\ e_3^T\end{bmatrix} \cdot P_{world}
                 $$
+                $$
+                = \mathbf{M_r} \cdot P_{world}
+                $$
+
+                Where \( P_{world}\) is the position vector of the point. <br>
+
+                This is great, however we also need to take your head's position into account.
+                Let's try to find a matrix such that:
+                $$
+                \mathbf{M_t} (\vec{x}) \cdot \vec{v} = \vec{v} + \vec{x}
+                $$
+
+                so that we can project any point \(P_{world}\) to the viewport of our camera:
+
+                $$
+                P' = \mathbf{M_{proj}} \cdot \mathbf{M_r} \cdot \mathbf{M_t} \cdot P_{world}
+                $$
+
+                We will derive these matrices soon, tune on!
+
             </p>
         </section>
+        <hr class="uc-hr"
+            data-label="🚧 UNDER CONSTRUCTION — WIP AHEAD"
+            aria-label="Under construction divider">
 
         <script src="static/js/3D/shaders.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix.min.js"></script>
