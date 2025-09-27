@@ -11,17 +11,38 @@
         <script src="static/js/2D/_types.js"></script>
         <script src="static/js/2D/projections.js"></script>
         <script src="static/js/2D/visuals.js"></script>
+        <script src="static/js/sidebar.js"></script>
         <!---->
         <link rel="stylesheet" href="static/css/style2.css">
     </head>
 
     <body>
+        <nav class="sidebar">
+            <div class="sb-logo">
+                Navigate the blog
+            </div>
+            <ul class="nav-links">
+                <li class="sb-element" target="intro">Intro</li>
+                <li class="sb-element" target="introduction">Introduction to computer graphics</li>
+                <li class="sb-element" target="projective-geometry">Projective Geometry</li>
+                <li class="sb-element" target="affine-transformations">Affine Transformations</li>
+                <li class="sb-element" target="lines-and-projections">Lines and Their Projections</li>
+                <li class="sb-element" target="model-view-transformations">Model and View Transformations</li>
+            </ul>
+            <div class="sb-footer">
+                <p>© Burzum wishes you to have fun!</p>
+            </div>
+        </nav>
+        <script>
+            const sidebar = new SideBarInitializer(document);
+            sidebar.init();
+        </script>
 
         <header>
             Burzum's take on Computer Graphics
         </header>
         
-        <section class="textChunk">
+        <section class="textChunk" id="intro">
             <p> Hello, beautiful people of the internet! I am Burzum, an idiotic nerd on the internet. In my blog I wanted to delve into
                 how video games, or computers in general, simulate our perception, using technologies such as:
                 perspective projections, texture mapping, shading models (like gourard), raytracing and whatnot.
@@ -50,7 +71,7 @@
                 It is not perfect, but it is very good at what it does.
         </section>
 
-        <section class="textChunk">
+        <section class="textChunk" id="introduction">
             <h2> Introduction </h2>
             <p>
                 The human vision works as follows: light coming from an object is projected on the curvature
@@ -106,7 +127,7 @@
             </script>
         </div>
 
-        <section class="textChunk">
+        <section class="textChunk" id="projective-geometry">
             <h2> Matrices </h2>
             <div class="note"> 
                 <label>
@@ -200,7 +221,34 @@
             </p>
         </section>
 
-        <section class="textChunk">
+        <section class="textChunk", id="affine-transformations">
+            <h2> Affine transformations </h2>
+            <p>
+                Let's try to talk about affine transformations a little. 
+                An import distinction we would be very happy to make is that projective transformations are not affine transformations.
+                An affine transformation is a transformation where distance ratios and parallelism are preserved.
+                For example say you translate a rectangle by 2 points to the left, 
+                the lines that were parallel before the transformation are still parallel, the distance of the sides
+                are still the same, therefore this is an affine transformation. <br>
+
+                More mathematically, if a transformation \(f\) is an affine transformation in \(\mathbb{R}^n\) then:
+
+                $$
+                f :  P \to  \mathbf{M_{n \times n}} \ \cdot P + \vec{v}
+                $$
+
+                For example translation is an affine transformation:
+
+                $$
+                 T(P, \vec{v}) = I_n \cdot P + \vec{v}
+                $$
+
+                Where \(I_n\) is the \(n\) th dimensional identity matrix.
+
+
+        </section>
+
+        <section class="textChunk" id="lines-and-projections">
             <h2>Lines and Their Projections</h2>
             <p> We all know what lines are, right? &#128515 <br>
                 The most common way of modeling a line is through the equation:
@@ -232,7 +280,7 @@
                 
                 $$ \frac{f(x)}{x} = m + \frac{c}{x}$$
 
-                and the final form \([1: m + \frac{c}{x}: w]\) is obviously another line:
+                and the final form \([1: m + \frac{c}{x}: w]\) is obviously another line.
 
                 $$ \bar{x} = \frac{1}{x} $$
 
@@ -294,7 +342,7 @@
         </section>
 
 
-        <section class="textChunk">
+        <section class="textChunk" id="model-view-transformations">
             <h2> Model and View Transformations </h2>
             <p>
                 When you look up, things on the ground go down. e.g, when you
@@ -340,7 +388,7 @@
                 <br>
                 <br>
 
-                Let's formalize this,
+                Let's formalize the rotation part,
                 assuming a left-handed coordinate system,
                 when you are looking at the direction \( \hat{d} \), you have a coordinate system with basis:
                 $$
@@ -367,12 +415,12 @@
                 P_{view} = \begin{bmatrix} e_1^T \\ e_2^T \\ e_3^T\end{bmatrix} \cdot P_{world}
                 $$
                 $$
-                = \mathbf{M_r} \cdot P_{world}
+                = \mathbf{M_{view}} \cdot P_{world}
                 $$
 
                 Where \( P_{world}\) is the position vector of the point. <br>
 
-                This is great, however we also need to take your head's position into account.
+                This is great, however we still need to take your head's position into account.
                 Let's try to find a matrix such that:
                 $$
                 \mathbf{M_t} (\vec{x}) \cdot \vec{v} = \vec{v} + \vec{x}
@@ -381,8 +429,19 @@
                 so that we can project any point \(P_{world}\) to the viewport of our camera:
 
                 $$
-                P' = \mathbf{M_{proj}} \cdot \mathbf{M_r} \cdot \mathbf{M_t} \cdot P_{world}
+                P' = \mathbf{M_{proj}} \cdot \mathbf{M_{view}} \cdot \mathbf{M_t} \cdot P_{world}
                 $$
+
+                As we have said in the affine transformations section, translation is an affine transformation;
+                but not a linear one! So it is going to be a 4x4 matrix. <br>
+
+                It is about time once again to augment our vector by a homogenous part, that is we create a homogenous coordinate:
+
+                $$
+                \vec{P} = \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix}
+                $$
+
+                
 
                 We will derive these matrices soon, tune on!
 
