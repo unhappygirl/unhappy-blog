@@ -28,6 +28,7 @@
                 <li class="sb-element" target="affine-transformations">Affine Transformations</li>
                 <li class="sb-element" target="lines-and-projections">Lines and Their Projections</li>
                 <li class="sb-element" target="model-view-transformations">Model and View Transformations</li>
+                <li class="sb-element" target="perspective-correct-interpolation">Perspective Correct Interpolation</li>
             </ul>
             <div class="sb-footer">
                 <p>© Burzum wishes you to have fun!</p>
@@ -155,7 +156,7 @@
             <h2> Projective geometry </h2>
             <p>
                 Projective geometry is a very abstract field of geometry that needs rigorous understanding.
-                I will absolutely not get into the details of it, however we will borrow the coordinate system that is associated with it:
+                I will absolutely not get into the details of it (and I mostly can't &#128575), however we will borrow the coordinate system that is associated with it:
                 As said, homogenous coordinates. Why not cartesian coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
                 via matrices. But how can homogenous coordinates can be? Let's see.
                 A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
@@ -251,7 +252,7 @@
         <section class="textChunk" id="lines-and-projections">
             <h2>Lines and Their Projections</h2>
             <p> We all know what lines are, right? &#128515 <br>
-                The most common way of modeling a line is through the equation:
+                The most friendly and perhaps common way of modeling a line is through the equation:
                 $$ mx + c = y $$
 
                 Most of the time though, in computer graphics, we will want to track some attributes of points
@@ -335,7 +336,7 @@
                 \ell_{1_{proj}}(\bar{\alpha}) + \bar{\gamma}(\ell_{2_{proj}}(\bar{\beta}) - \ell_{2_{proj}}(\bar{\alpha}))
                 $$
 
-                using the parameters above. As polygon primitives are usually triangles, barycentric coordinates are 
+                using the parameters above. Polygon primitives are usually triangles or triangles, and a more convenient way of representing a surface: barycentric coordinates are 
                 often used instead. <br> We will get on to it later.
 
             </p>
@@ -441,24 +442,201 @@
                 \vec{P} = \begin{bmatrix} x \\ y \\ z \\ 1 \end{bmatrix}
                 $$
 
-                
+                This way we can express non-linear and non-affine transformations via matrix multiplications!
 
-                We will derive these matrices soon, tune on!
+                And it is known that matrix multiplication is <a href="https://en.wikipedia.org/wiki/Associative_property">associative</a>.
+
+                Meaning all symbols being matrices:
+
+                $$
+                \mathbf{(AB)C = A(BC)}
+                $$
+
+                And:
+
+                $$
+                \mathbf{A}(\mathbf{B}(\mathbf{C}\mathbf{D})) = (\mathbf{A}\mathbf{B}\mathbf{C})\mathbf{D}
+                $$
+
+                Hopefully the picture is clear:
+
+
+                As we have seen before, the matrix that projects a point onto a plane that is vertical and sits at \(x = d\) is:
+
+                $$
+                \mathbf{M_{proj}} = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0& 0 & 1 & 0 \\ 0 & 0 & \frac{1}{d} & 0\end{bmatrix}
+                $$
+
+
+                Now let's get back to finding the translation matrix. It is easier to find it intuitively rather than mathematically, so we will use our intuition for now. <br>
+            
+                A translated point reads as:
+
+                $$
+                \vec{P}'_t = \begin{bmatrix} x + \delta x \\ y + \delta y \\ z + \delta z \\ 1 \end{bmatrix}
+                $$
+
+                Notice the homogenous part is \(1\). Considering we will be multiplying the last column of our translation matrix with the homogenous part which is \(1\), 
+                anything in the last column will be added to the respect each row in our position vector!
+
+                $$
+                \vec{P}'_t = \vec{P} \cdot \begin{bmatrix} 1 & 0 & 0 & \delta x \\ 0 & 1 & 0 & \delta y \\ 0 & 0 & 1 & \delta z \\ 0 & 0 & 0 & 1\end{bmatrix}
+                $$
+
+                And there is our translation matrix! We have derived every matrix to obtain our final matrix that orients a point to the viewspace and projects it onto our viewport!
+                The only thing missing is clipping now, which we will delve into shortly after. But firstly, it is time for one of the most important mathematical aspect of computer graphics.
 
             </p>
+
         </section>
+
+        <section class="textChunk" id="perspective-correct-interpolation">
+            <h2> Planes and their projections </h2>
+            <p>
+            This I think, is one of the most important topics in computer graphics; so it is crucial for you, me and everyone that wants to comprehend computer graphics in detail; to understand. 
+            So let's buckle up and try to understand why texturing is problematic if done without perspectiity in mind. <br>
+
+            Almost always, shaders running on your gpu interpolates the primitives: quads, triangles; after they are projected. This is because, as discussed in the lines-and-projections chapter, 
+            lines (segments) project to lines, meaning their interpolated points also correspond to the interpolations of the projected points. Same goes for surfaces. 
+            For example you can project four of the corners of a square and draw lines from each corner and every point inside that projected quadrilateral is also inside the original square!
+            These points that are inside the polygon and are interpolated are called <a href="https://en.wikipedia.org/wiki/Fragment_(computer_graphics)">fragments<a>. They are basically the points on the projected primitives that are not the corners or not on the sides of 
+            the projected polygon. <br>
+
+            Now let's imagine a finite plane that is a square for convenience. You can think of it as a wall segment that needs to be textured, or a small quad primitive of a larger mesh:
+
+            $$
+            q(\alpha, \beta) = C + \alpha \vec{a} + \beta \vec{b}
+            $$
+
+            where 
+            $$
+            \alpha, \beta \in [0, 1]
+            $$
+
+            If you have problems with this definition, don't worry. Let me explain! \(C\) is the position vector of a corner we have selected on the rectangular finite plane,
+            and the vectors \(\vec{a}\) and \(\vec{b}\) are vectors that are pointing from \(C\) to neighboring corners. So the \(C\) is the vector that "moves" to the plane and
+            \(\vec{a}\) and \(\vec{b}\) are basis vectors that move the point across the plane. \(\alpha\), \(\beta\) are just parameters that run independently from 0 to 1. This is esentially interpolating
+            lines on a rectangular surface: fix \(\alpha\) to a value and vary \(\beta\) and you are interpolating a line on the surface.<br>
+            For example, \(q(1, 1)\) is the diagonal non-neighboring corner of \(C\), and \(q(0, 0) = C\).
+
+            a more common (but ultimately the same) way of defining a surface though, is with the same parameters but with 3 corners (more precisely their position vectors) 
+            instead of the mentioned two basis vectors that are derived from them. Let's label them \(A\), \(B\) and \(C\) which was already there in the equation. It is not hard to see that
+
+            $$
+            \vec{a} = A - C
+            $$
+
+            and 
+
+            $$
+            \vec{b} = B - C
+            $$
+
+            Therefore our equation becomes:
+
+            $$
+            q(\alpha, \beta) = C + \alpha (A - C) + \beta (B - C) 
+            $$
+            $$
+            = C + \alpha A - \alpha C + \beta B - \beta C 
+            $$
+            $$
+            = (1 - \alpha - \beta)C + \alpha A +\beta B 
+            $$
+
+            If we let 
+            
+            $$
+            \gamma = (1 - \alpha - \beta)
+            $$
+            Then:
+            $$
+            q(\alpha, \beta, \gamma) = \gamma C + \alpha A +\beta B 
+            $$
+
+            Becomes the barycentric coordinates parametrization of the surface! (Remember the definition we made in the lines-and-projections chapter?) <br>
+
+
+            A texture is also a 2D rectangular image, a pixel array. What if I wanted to project this texture onto the \(z=1\) plane? We know that the texels (texture pixels)
+            vary linearly on the plane with respect to the barycentric coordinates \((\alpha, \beta, \gamma)\) but what happens to these parameters when we project the texture onto the plane?
+            Well, as we have discussed extensively, each texel would divide by its \(z\) coordinate. Where \(z\) is also interpolated with the said parameters:
+            $$
+            z = \omega_0 = \gamma C_z + \alpha A_z +\beta B_z
+            $$
+
+            where:
+
+            $$
+            q_{proj}(\alpha, \beta, \gamma) = \begin{bmatrix} q_x \\ q_y \\ q_z \\ \omega_0 \end{bmatrix}
+            $$
+
+            and therefore:
+
+            $$
+            q_{proj}(\alpha, \beta, \gamma) = \frac{\gamma}{w_0} C + \frac{\alpha}{w_0} A + \frac{\beta}{w_0} B 
+            $$
+
+            Or just a parameter swap:
+
+            $$
+            q_{proj}(\bar{\alpha}, \bar{\beta}, \bar{\gamma}) = \bar{\gamma} C + \bar{\alpha} A + \bar{\beta} B 
+            $$
+
+            where, as we know what \(w_0\) is:
+
+            $$
+            \bar{\alpha} = \frac{\alpha}{w_0} = \frac{\alpha}{(1 - \alpha - \beta) C_z + \alpha A_z +\beta B_z}
+            $$
+
+            And the rest, similarly:
+
+            $$
+            \bar{\beta} = \frac{\beta}{w_0(\alpha, \beta)}
+            $$
+
+            $$
+            \bar{\gamma} = \frac{1}{w_0(\alpha, \beta)} - \bar{\alpha} - \bar{\beta}
+            $$
+
+            Here we have it! The parameters that we can use to interpolate the projected surface! 
+            This is huge! Why? We can now linearly interpolate attributes on the projected surface!
+
+            Let's define a square texture as \(T(u, v)\) where \(u\) and \(v\) are texture coordinates. And label one corner \(T_0\) as the local origin, and other adjacent corners \(T_1\) and \(T_0\)
+
+            We already know the projected texture on \(z = d\) (generalizing):
+
+            $$
+            T_{proj}(u, v) = \bigg(\frac{1}{w_0} - \frac{u}{w_0} - \frac{v}{w_0}\bigg) T_0 + \frac{u}{w_0} T_1 + \frac{v}{w_0} T_2
+            $$
+
+            Where \(w_0\) is:
+            
+            $$
+            w_0 = \frac{1}{d} \cdot z = \frac{(1 - u - v) {T_0}_z + u {T_1}_z + v {T_2}_z}{d}
+            $$
+
+            When we are interpolating across the projected texture with \(\bar{u}\) and \(\bar{v}\) if we multiply the 
+            them with:
+
+            $$
+             \bigg(\frac{(1 - u - v) {T_0}_z + u {T_1}_z + v {T_2}_z}{d}\bigg)^{-1} = \frac{1}{\omega_0}
+            $$
+
+            then we get back the corresponding parameters used to interpolate the "unprojected" texture and therefore the corresponding texel: \(T(u, v)\)! Neat huh? Every shader does this to find the original parameters or coordinates on the projected primitive 
+            to recover the "unprojected" attributes, like: texel coordinates, rgb values (e.g if you are interpolating RGB colors), surface normals etc. 
+
+            <div class="note">
+                <label>
+                If you couldn't follow the mathematics in this chapter, it will be recapped, so don't worry!
+                </label>
+            </div>
+            
+        </p>
+        </section>
+
         <hr class="uc-hr"
             data-label="🚧 UNDER CONSTRUCTION — WIP AHEAD"
             aria-label="Under construction divider">
-
-        <script src="static/js/3D/shaders.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix.min.js"></script>
-        <script src="static/js/3D/objparser.js"></script>
-        <section class="canvasContainer">
-            <label for="3Dprojective">W.I.P </label>
-            <canvas id="3Dprojective", width="600", height="600"></canvas>
-        </section>
-        <script src="static/js/3D/webgl.js"></script>
 
 
         <footer>
