@@ -336,7 +336,7 @@
                 \ell_{1_{proj}}(\bar{\alpha}) + \bar{\gamma}(\ell_{2_{proj}}(\bar{\beta}) - \ell_{2_{proj}}(\bar{\alpha}))
                 $$
 
-                using the parameters above. Polygon primitives are usually triangles or triangles, and a more convenient way of representing a surface: barycentric coordinates are 
+                using the parameters above. Polygon primitives are usually triangles or quads, and a more convenient way of representing a surface: barycentric coordinates are 
                 often used instead. <br> We will get on to it later.
 
             </p>
@@ -494,7 +494,7 @@
             <h2> Planes and their projections </h2>
             <p>
             This I think, is one of the most important topics in computer graphics; so it is crucial for you, me and everyone that wants to comprehend computer graphics in detail; to understand. 
-            So let's buckle up and try to understand why texturing is problematic if done without perspectiity in mind. <br>
+            So let's buckle up and try to understand why texturing is problematic if done without perspectivity in mind. <br>
 
             Almost always, shaders running on your gpu interpolates the primitives: quads, triangles; after they are projected. This is because, as discussed in the lines-and-projections chapter, 
             lines (segments) project to lines, meaning their interpolated points also correspond to the interpolations of the projected points. Same goes for surfaces. 
