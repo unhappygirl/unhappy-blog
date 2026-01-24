@@ -90,6 +90,14 @@ canvas {
   text-decoration: underline;
 }
 
+.textChunk img {
+  width: 45%;
+  height: auto;
+  display: block;
+  margin: 50px auto;
+  border-radius: 4px;
+}
+
 .textChunk:hover {
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
 }
@@ -122,6 +130,7 @@ canvas {
   border-radius: 2px;
   align-items: center;
 }
+
 
 .imgContainer img {
   max-width: 80%;
@@ -307,7 +316,7 @@ hr.uc-hr {
   margin-bottom: 30px;
   text-align: center;
   color: var(--sb-fg);
-  text-decoration: underline;
+  text-decoration: wavy
 }
 
 .sb-element {
@@ -338,7 +347,7 @@ hr.uc-hr {
   margin-top: auto;
   text-align: center;
   font-size: 0.8em;
-  color: greenyellow;
+  color: crimson;
 }
 
 /* Small screens: shrink padding & text size */

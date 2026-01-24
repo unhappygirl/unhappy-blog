@@ -29,6 +29,7 @@
                 <li class="sb-element" target="lines-and-projections">Lines and Their Projections</li>
                 <li class="sb-element" target="model-view-transformations">Model and View Transformations</li>
                 <li class="sb-element" target="perspective-correct-interpolation">Perspective Correct Interpolation</li>
+                <li class="sb-element" target="view-frustrum">The View Frustrum</li>
             </ul>
             <div class="sb-footer">
                 <p>© Burzum wishes you to have fun!</p>
@@ -47,20 +48,26 @@
             <p> Hello, beautiful people of the internet! I am Burzum, a goofy nerd on the internet. In my blog I wanted to delve into
                 how video games, or computers in general, simulate our perception, using technologies such as:
                 perspective projections, texture mapping, shading models (like gourard), raytracing and whatnot.
+                Initially though, it will mostly about rasterization.
             </p>
 
             <p>
                 <h2>What to expect?</h2>
                 <p>
-                For now, some incomplete but original explanations of the theoretical foundations of computer graphics.
+                For now, some incomplete but original explanations of the theoretical and mathematical foundations of computer graphics.
+                I try to relate to how the mathematical model is built and our vision to not stay so abstract.
                 The blog is still incomplete, but it is being updated actively. So don't forget to check it out frequently!
                 </p>
             </p>
 
             <p>
-                Don't be intimitated! If you don't have a huge mathematical background, it is fine. I will try to be as
-                simple as possible. (though some ) <br>
-                if you are interested (I can't think of a reason tbh but) in visiting my old and embarassing attempt: <a href="/graphics_legacy"> link </a>
+                Starts out a little more mathematically friendly but then gets a little complicated as I try to get to mathematical root of the technology.
+                Don't be intimitated though! If you don't have a huge mathematical background, it is fine. I will try to be as
+                direct as possible, and something I want to say: don't get scared by notation. What I explain actually vanishes to nothing more than division and multiplication. 
+                There are some possible confusing constructions like matrices here and there (actually everywhere lol) but behind all that fancy stuff, the idea is SIMPLE. 
+                It just builds around that very simple idea to eventually make it complex. <br>
+                if you are interested (I can't think of a reason tbh but...) in visiting my old and embarassing attempt: <a href="/graphics_legacy">link</a> <br>
+                It is fun to look at I guess so I left it there.
             </p>
         </section>
 
@@ -75,11 +82,11 @@
         <section class="textChunk" id="introduction">
             <h2> Introduction </h2>
             <p>
-                The human vision works as follows: light coming from an object is projected on the curvature
+                The human vision works roughly as follows: light coming from an object is projected on the curvature
                 of the back of the eye, and our brain flips it and accounts for the curvature,
                 making it flat (mostly). This in fact, is equivalent to perspective projection.
 
-                There are other type of projections, which be later discuessed (WIP).
+                There are other type of projections (orthogonal for example), which be later discuessed (WIP?).
 
             </p>
 
@@ -92,7 +99,8 @@
                 <br>
                 Perspective projection is esentially the same thing.
                 We take a point and transform it so that it is projected on something, in our case it will be a plane.
-                But to sake of simplicity, let's start with \(R^2\) (2D).
+                This I think is the most introductory phrase to the conventional real-time rendering methods. Points projecting onto a plane.
+                But to sake of simplicity, let's start with \(R^2\), 2 dimensions. The 2D analogue of a plane is a line.
             </p>
         </section>
         <section class="canvasContainer">
@@ -137,7 +145,9 @@
                 </label> 
             </div>  
             <p>
-                A matrix is a 2 dimensional collection of numbers, and is used to transform points.
+                "Points projecting onto a plane", we said; but how? The answer is with matrices. Just look above. <br>
+
+                A matrix is a 2 dimensional collection of numbers, and can be -and are used to transform points.
                 For example: $$P = I_2 \cdot P$$
                 where \(I_2\) is the 2 dimensional identity matrix:
                 $$ I_2 = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} $$
@@ -158,7 +168,7 @@
                 Projective geometry is a very abstract field of geometry that needs rigorous understanding.
                 I will absolutely not get into the details of it (and I mostly can't &#128575), however we will borrow the coordinate system that is associated with it:
                 As said, homogenous coordinates. Why not cartesian coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
-                via matrices. But how can homogenous coordinates can be? Let's see.
+                via matrices. But how can homogenous coordinates can be used to achieve this? Let's see.
                 A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
                 $$P_0 \sim \lambda \cdot P_1, \ \lambda \ne 0$$
 
@@ -393,35 +403,82 @@
                 assuming a left-handed coordinate system,
                 when you are looking at the direction \( \hat{d} \), you have a coordinate system with basis:
                 $$
-                B = \big\{ e_1, \  e_2, \ e_3 \big\}
+                \mathcal{B} = \big\{ \hat{b}_1, \  \hat{b}_2, \ \hat{b}_3 \big\}
                 $$
                 where:
                 $$
-                e_3 = \hat{d}
+                \hat{b}_3 = \hat{d}
                 $$
                 $$
-                e_2 = \hat{d}_{\perp}
+                \hat{b}_2 = \hat{d}_{\perp}
                 $$
                 $$
-                e_1 = \hat{d}_{\perp} \times e_3
+                \hat{b}_1 = \hat{d}_{\perp} \times \hat{b}_3
                 $$
                 relative to the global world space! Transformation to your view is:
                 $$
-                P_{view} \mapsto (e_1 \cdot P_{world})e_1 + (e_2 \cdot P_{world})e_2 + (e_3 \cdot P_{world})e_3
+                P_{view} \mapsto (\hat{b}_1 \cdot P_{world})\hat{b}_1 + (\hat{b}_2 \cdot P_{world})b_2 + (\hat{b}_3 \cdot P_{world})\hat{b}_3
                 $$
 
                 or:
 
                 $$
-                P_{view} = \begin{bmatrix} e_1^T \\ e_2^T \\ e_3^T\end{bmatrix} \cdot P_{world}
+                P_{view} = \begin{bmatrix} \hat{b}_1^T \\ \hat{b}_2^T \\ \hat{b}_3^T\end{bmatrix} \cdot P_{world}
                 $$
                 $$
-                = \mathbf{M_{view}} \cdot P_{world}
+                = \mathbf{M_{rotation}} \cdot P_{world}
                 $$
 
                 Where \( P_{world}\) is the position vector of the point. <br>
 
-                This is great, however we still need to take your head's position into account.
+                But why? That would be a good question. This is going to be kind of mathematical &#128515 <br>
+
+                <div class="note">
+                    <label>
+                        Please look at the definition of the <a href="https://www.mathsisfun.com/algebra/vectors-dot-product.html">dot product</a> and familiarize yourself with it if you haven't already!
+                        Or it is going to be very diffidcult from now on...
+                    </label>
+                    
+                </div>
+            </p>
+
+            <p>
+
+                Alright so what we are esentially trying to do is a coordinate system transformation, without 
+                taking into the camera's position into account. Let's say we have two bases with the same origin: \(\mathcal{E}\), 
+                the basis of the euclidean space we all know and love \(\mathbb{R}^3\):
+                $$
+                \mathcal{E} = \big\{ (1, 0, 0), \  (0, 1, 0), \ (0, 0, 1) \big\}
+                $$
+                 
+                and another random basis: \(\mathcal{B}\). <br>
+                
+                Now consider a point \(P_0\) represented in \(\mathcal{E}\): 
+                $$
+                P_0 = (x_0, y_0, z_0)
+                $$
+
+                The key is to realize that this also equals to:
+
+                $$
+                = \big( \hat{e}_1\cdot P_0, \ \hat{e}_2\cdot P_0, \ \hat{e}_3\cdot P_0 \big)
+                $$
+
+                Meaning that each coordinate is just the dot product of the point's position vector with the respective basis! 
+
+                We aim to represent it in the \(\mathcal{B}\) basis now:
+
+                $$
+                {P_0}' = \big(\hat{b}_1\cdot P_0, \ \hat{b}_2\cdot P_0, \ \hat{b}_3\cdot P_0 \big)
+                $$
+
+                Because those dot products are 
+                essentially the projections of the vector from the origin to \(P_0\) onto the axis, basis vectors of \(\mathcal{B}\):
+
+                <img src="../static/img/axes.png" alt="axes"></img>
+                                
+
+                This is great, however we still need to take your head's, or the camera's position into account.
                 Let's try to find a matrix such that:
                 $$
                 \mathbf{M_t} (\vec{x}) \cdot \vec{v} = \vec{v} + \vec{x}
@@ -430,7 +487,7 @@
                 so that we can project any point \(P_{world}\) to the viewport of our camera:
 
                 $$
-                P' = \mathbf{M_{proj}} \cdot \mathbf{M_{view}} \cdot \mathbf{M_t} \cdot P_{world}
+                P' = \mathbf{M_{proj}} \cdot \mathbf{M_{rotation}} \cdot \mathbf{M_translation} \cdot P_{world}
                 $$
 
                 As we have said in the affine transformations section, translation is an affine transformation;
@@ -476,7 +533,7 @@
                 \vec{P}'_t = \begin{bmatrix} x + \delta x \\ y + \delta y \\ z + \delta z \\ 1 \end{bmatrix}
                 $$
 
-                Notice the homogenous part is \(1\). Considering we will be multiplying the last column of our translation matrix with the homogenous part which is \(1\), 
+                Notice the homogenous part is still \(1\). Considering we will be multiplying the last column of our translation matrix with the homogenous part which is \(1\), 
                 anything in the last column will be added to the respect each row in our position vector!
 
                 $$
@@ -484,8 +541,25 @@
                 $$
 
                 And there is our translation matrix! We have derived every matrix to obtain our final matrix that orients a point to the viewspace and projects it onto our viewport!
-                The only thing missing is clipping now, which we will delve into shortly after. But firstly, it is time for one of the most important mathematical aspect of computer graphics.
 
+            </p>
+
+            <h2> The classic: putting it all together...</h2>
+                
+            <p>
+                So let's say we have a camera at \(\vec{p}\) with axes: \(\hat{b}_1\), \(\hat{b}_2\) and \(\hat{b}_3\) and a viewport sitting at \(z=d\) (in the camera's viewspace) then our projection matrix is:
+
+                $$
+                \mathbf{M}_{proj} \cdot \mathbf{M}_{view} =
+                \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0& 0 & 1 & 0 \\ 0 & 0 & \frac{1}{d} & 0\end{bmatrix}
+                \cdot \begin{bmatrix} {\hat{b}_1}_x & {\hat{b}_1}_y & {\hat{b}_1}_z & -x_c \\ {\hat{b}_2}_x & {\hat{b}_2}_y & {\hat{b}_2}_z & -y_c\\ {\hat{b}_3}_x & {\hat{b}_3}_y & {\hat{b}_3}_z & -z_c \\ 0 & 0 & 0 & 1 \end{bmatrix}
+                $$
+
+                I have used the associative property of matrices to evaluate \(\mathbf{M}_{translation} \cdot \mathbf{M}_{rotation}\) to obtain \(\mathbf{M}_{view}\).
+
+                The order is crucial. We assume in our view matrix that the homogenous part is \(1\), so it must be multiplied -with the point- before the projection matrix.
+                The only thing missing is clipping (and viewport transformations) now, which we will delve into shortly after. 
+                But firstly, it is time for one of the most important mathematical aspect of computer graphics.
             </p>
 
         </section>
@@ -499,8 +573,8 @@
             Almost always, shaders running on your gpu interpolates the primitives: quads, triangles; after they are projected. This is because, as discussed in the lines-and-projections chapter, 
             lines (segments) project to lines, meaning their interpolated points also correspond to the interpolations of the projected points. Same goes for surfaces. 
             For example you can project four of the corners of a square and draw lines from each corner and every point inside that projected quadrilateral is also inside the original square!
-            These points that are inside the polygon and are interpolated are called <a href="https://en.wikipedia.org/wiki/Fragment_(computer_graphics)">fragments<a>. They are basically the points on the projected primitives that are not the corners or not on the sides of 
-            the projected polygon. <br>
+            These points that are inside the polygon and are interpolated are called <a href="https://en.wikipedia.org/wiki/Fragment_(computer_graphics)">fragments</a>. They are basically the points on the projected primitives that are not the corners or not on the sides of 
+            the projected polygon. We will discuss this in a future chapter: Rasterization. <br>
 
             Now let's imagine a finite plane that is a square for convenience. You can think of it as a wall segment that needs to be textured, or a small quad primitive of a larger mesh:
 
@@ -601,7 +675,7 @@
             Here we have it! The parameters that we can use to interpolate the projected surface! 
             This is huge! Why? We can now linearly interpolate attributes on the projected surface!
 
-            Let's define a square texture as \(T(u, v)\) where \(u\) and \(v\) are texture coordinates. And label one corner \(T_0\) as the local origin, and other adjacent corners \(T_1\) and \(T_0\)
+            Let's define a square texture as \(T(u, v)\) where \(u\) and \(v\) are texture coordinates. And label one corner \(T_0\) as the local origin, and other adjacent corners \(T_1\) and \(T_2\)
 
             We already know the projected texture on \(z = d\) (generalizing):
 
@@ -624,19 +698,53 @@
 
             then we get back the corresponding parameters used to interpolate the "unprojected" texture and therefore the corresponding texel: \(T(u, v)\)! Neat huh? Every shader does this to find the original parameters or coordinates on the projected primitive 
             to recover the "unprojected" attributes, like: texel coordinates, rgb values (e.g if you are interpolating RGB colors), surface normals etc. 
+            </p>
 
             <div class="note">
                 <label>
                 If you couldn't follow the mathematics in this chapter, it will be recapped, so don't worry!
                 </label>
             </div>
+
+        </section>
             
         
-        
+        <section class="textChunk" id="view-frustrum">
+            <h2> Clipping </h2>
 
-        <hr class="uc-hr"
+            <p>
+                Consider yourself looking at your screen right now. Do you see everything and anything around you, even if they are not obstructed by an object? Do you see your back? 
+                Do you see anything that is behind you? Assuming you are a human being with normal eyes, you don't. The reason you don't is because certain light coming from certain 
+                directions, angles don't reach your eye. The light that bounces from an object behind you (and is coming towards your eye), or that is completely above you, hits your head
+                and since your head is not transparent, it is absorbed reflected et cetera. Ok, enough of making common sense sounding like a physics lecture. The simple idea is that you have a field of view in
+                two axes: \(x\) and \(y\). Of course as long as we assume the mentioned fictional eye space of at the center of your head, where you always look at the \(z+\) direction. 
+                This creates an infinitely long pyramid where the top your vanishing point, or perspective point or "the eye". <br>
+            </p>
+
+            <h2> "The far plane" </h2>
+
+            <p> 
+                Ok, we have fields of view in two dimensions, but what about \(z\)? Well, we can see any light as long as it is coming towards our eye within the constraints of our
+                \(x\) \(y\) FOV's. Any light, including the faint starlight from the young stars that are dead now, from billions of years ago, we can see them as long as it reaches or eye!
+                But... We are working with computers here, and they are terrible with the notion of infinity. I can't let my renderer draw everything indefinitely, that is in my FOV, if I am making an open world game for example. 
+                It would generate a enormous amount of computational constraints and performance issues. If you have played minecraft before, you'd get it right away! Minecraft worlds are infinite:
+                imagine looking from a viewpoint in minecraft so high up there is little that obstruct your view. What would you see? Minecraft worlds are flat, so no; there wouldn't be a horizon. Say goodbye to your PC,
+                as it shrieks in pain while trying to render chunks as far away as the andromeda galaxy. <br>
+
+                What we need is a threshold that we use to not render something if they are too far away, so we introduce another constraint: a "far plane" as it is conventionally called. This along with our
+                viewport or the "near plane" makes up a frustrum (of a pyramid). Anything that is outside this frustrum is ignored or "clipped".
+            </p>
+
+            <hr class="uc-hr"
             data-label="🚧 UNDER CONSTRUCTION — WIP AHEAD"
             aria-label="Under construction divider">
+
+            <p>To be continued...</p>
+
+        </section>
+
+
+        
 
 
         <footer>
