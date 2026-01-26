@@ -63,13 +63,14 @@ canvas {
 
 /* Text Chunk Styling */
 .textChunk {
-  max-width: 60%;
+  max-width: 50%;
   background-color: salmon;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin-top: 40px;
   transition: all 0.2s ease;
+  font-size: 15px;
 }
 
 .textChunk p {
