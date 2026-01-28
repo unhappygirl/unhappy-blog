@@ -555,14 +555,14 @@
                 \mathbf{M}_{proj} \cdot \mathbf{M}_{view} =
                 \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0& 0 & 1 & 0 \\ 0 & 0 & \frac{1}{d} & 0\end{bmatrix}
                 \cdot \begin{bmatrix}
-                \hat b_{1x} & \hat b_{1y} & \hat b_{1z} & -(\hat b_1 \cdot C) \\
-                \hat b_{2x} & \hat b_{2y} & \hat b_{2z} & -(\hat b_2 \cdot C) \\
-                \hat b_{3x} & \hat b_{3y} & \hat b_{3z} & -(\hat b_3 \cdot C) \\
+                \hat b_{1x} & \hat b_{1y} & \hat b_{1z} & -(\hat b_1 \cdot \vec{p}) \\
+                \hat b_{2x} & \hat b_{2y} & \hat b_{2z} & -(\hat b_2 \cdot \vec{p}) \\
+                \hat b_{3x} & \hat b_{3y} & \hat b_{3z} & -(\hat b_3 \cdot \vec{p}) \\
                 0 & 0 & 0 & 1
                 \end{bmatrix}
                 $$
 
-                I have used the associative property of matrices to evaluate \(\mathbf{M}_{translation} \cdot \mathbf{M}_{rotation}\) to obtain \(\mathbf{M}_{view}\).
+                I have used the associative property of matrices to evaluate \(\mathbf{M}_{rotation} \cdot \mathbf{M}_{translation}\) to obtain \(\mathbf{M}_{view}\).
 
                 The order is crucial. We assume in our view matrix that the homogenous part is \(1\), so it must be multiplied -with the point- before the projection matrix.
                 The only thing missing is clipping (and viewport transformations) now, which we will delve into shortly after. 
@@ -974,9 +974,9 @@
                 \cdot 
 
                 \begin{bmatrix}
-                \hat b_{1x} & \hat b_{1y} & \hat b_{1z} & -(\hat b_1 \cdot C) \\
-                \hat b_{2x} & \hat b_{2y} & \hat b_{2z} & -(\hat b_2 \cdot C) \\
-                \hat b_{3x} & \hat b_{3y} & \hat b_{3z} & -(\hat b_3 \cdot C) \\
+                \hat b_{1x} & \hat b_{1y} & \hat b_{1z} & -(\hat b_1 \cdot \vec{p}) \\
+                \hat b_{2x} & \hat b_{2y} & \hat b_{2z} & -(\hat b_2 \cdot \vec{p}) \\
+                \hat b_{3x} & \hat b_{3y} & \hat b_{3z} & -(\hat b_3 \cdot \vec{p}) \\
                 0 & 0 & 0 & 1
                 \end{bmatrix}
                 $$
