@@ -54,7 +54,7 @@
             <p>
                 <h2>What to expect?</h2>
                 <p>
-                For now, some incomplete but original explanations of the theoretical and mathematical foundations of computer graphics.
+                For now, some incomplete-ish but original explanations of the theoretical and mathematical foundations of computer graphics.
                 I try to relate to how the mathematical model is built and our vision to not stay so abstract.
                 The blog is still incomplete, but it is being updated actively. So don't forget to check it out frequently!
                 </p>
@@ -87,7 +87,28 @@
                 making it flat (mostly). This in fact, is equivalent to perspective projection.
 
                 There are other type of projections (orthogonal for example), which be later discuessed (WIP?).
+            </p>
 
+            <h2> The pinhole camera model </h2>
+            <img src="../static/img/pinhole_camera.jpg" alt="pinhole-camera">
+
+            <p>
+                The pinhole camera model is very simple camera model that consists of a very narrow hole
+                and a hypothetical box to let light in coming from certain directions, and project 
+                it onto a wall that is behind the hole.
+                For our vision, the pinhole camera model is close, though not the same. Our eyes have lenses
+                that focus the upcoming light that alter the aperture, the lens can shrink, get bigger etc.
+                However it is still sufficiently accurate to be able to demonstrate this model for our purposes.
+                Notice in the image that the image is flipped. Now think of an imaginary viewport in front of the pinhole.
+                The image also projects onto that phantom viewport, but the image is, in fact, not flipped:
+            </p>
+
+            <img src="../static/img/phantom.png" alt="phantom-vp">
+
+            <p>
+                So imagine your eye sitting at the pinhole, we can say you have a viewport; 
+                a plane, at \(z=F\), then perspective project everything there, with respect to the pinhole (your eye)!
+                This is the model we will use mathematically, whether it is rasterization or raytracing.
             </p>
 
             <p>
@@ -98,9 +119,9 @@
                 And therefore, we transformed it, we have obtained a point from another by doing something to it, in this case translation.
                 <br>
                 Perspective projection is esentially the same thing.
-                We take a point and transform it so that it is projected on something, in our case it will be a plane.
+                We take a point and transform it so that it is projected on something, in our case the image plane of our eye.
                 This I think is the most introductory phrase to the conventional real-time rendering methods. Points projecting onto a plane.
-                But to sake of simplicity, let's start with \(R^2\), 2 dimensions. The 2D analogue of a plane is a line.
+                But for the sake of simplicity, let's start with \(\mathbb{R}^2\), 2 dimensions, as the 2D analogue of a plane is a line.
             </p>
         </section>
         <section class="canvasContainer">
@@ -145,7 +166,7 @@
                 </label> 
             </div>  
             <p>
-                "Points projecting onto a plane", we said; but how? The answer is with matrices. Just look above. <br>
+                "Points projecting onto a plane", we said; but how? The answer is with matrices. Just look above! <br>
 
                 A matrix is a 2 dimensional collection of numbers, and can be -and are used to transform points.
                 For example: $$P = I_2 \cdot P$$
@@ -155,7 +176,8 @@
                 Let's say we are multiplying a 3x3 matrix with a 1x3 column matrix, we need 3 entries for the resultant column matrix,
                 which are entirely independent of each other. Esentially, we need 3 dot independent products, which is just repetitive addition; relatively simple in terms of computation.
                 Another reason is integrity: for every point if we can find a transformation matrix, we will just multiply every point with 
-                the same matrix, no questions asked! You can start to understand why it is advantagous to use matrices.
+                the same matrix, no questions asked! You can start to understand why it is advantagous to use matrices. If I would try to
+                
                 <br>
                 <br>
                 Above, you see a homogenous point being transformed via a 3x3 matrix.
@@ -165,9 +187,9 @@
             </p> 
             <h2> Projective geometry </h2>
             <p>
-                Projective geometry is a very abstract field of geometry that needs rigorous understanding.
-                I will absolutely not get into the details of it (and I mostly can't &#128575), however we will borrow the coordinate system that is associated with it:
-                As said, homogenous coordinates. Why not cartesian coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
+                Projective geometry is some fancy stuff,
+                and I will absolutely not get into the details of it (and I mostly can't &#128575), however we will borrow the coordinate system that is associated with it:
+                as said, homogenous coordinates. Why not cartesian coordinates? Well, let me repeat; as stated, cartesian coordinates cannot be projectively transformed
                 via matrices. But how can homogenous coordinates can be used to achieve this? Let's see.
                 A projective plane \( \mathbb{P}^2 \) is a set of equivalence relations defined as follows:
                 $$P_0 \sim \lambda \cdot P_1, \ \lambda \ne 0$$
@@ -262,6 +284,9 @@
         <section class="textChunk" id="lines-and-projections">
             <h2>Lines and Their Projections</h2>
             <p> We all know what lines are, right? &#128515 <br>
+                Lines are of paramount importance for rasterization. You will understand more about why in the 
+                perspective-correct-interpolation chapter. <br>
+
                 The most friendly and perhaps common way of modeling a line is through the equation:
                 $$ mx + c = y $$
 
@@ -348,6 +373,9 @@
 
                 using the parameters above. Polygon primitives are usually triangles or quads, and a more convenient way of representing a surface: barycentric coordinates are 
                 often used instead. <br> We will get on to it later.
+
+                Another very important conclusion is that since the projection of lines are again lines, the process of 
+                projecting a line can be done by projecting two points then drawing a line between the projected points without any further calculations.
 
             </p>
         </section>
@@ -700,7 +728,7 @@
             them with:
 
             $$
-             \bigg(\frac{(1 - u - v) {T_0}_z + u {T_1}_z + v {T_2}_z}{d}\bigg)^{-1} = \frac{1}{\omega_0}
+             \frac{(1 - u - v) {T_0}_z + u {T_1}_z + v {T_2}_z}{d} = \omega_0
             $$
 
             then we get back the corresponding parameters used to interpolate the "unprojected" texture and therefore the corresponding texel: \(T(u, v)\)! Neat huh? Every shader does this to find the original parameters or coordinates on the projected primitive 
