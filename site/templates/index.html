@@ -30,6 +30,7 @@
                 <li class="sb-element" target="model-view-transformations">Model and View Transformations</li>
                 <li class="sb-element" target="perspective-correct-interpolation">Perspective Correct Interpolation</li>
                 <li class="sb-element" target="view-frustrum">The View Frustrum</li>
+                <li class="sb-element" target="Rasterization">Rasterization</li>
             </ul>
             <div class="sb-footer">
                 <p>© Burzum wishes you to have fun!</p>
@@ -231,10 +232,9 @@
                 $$
                 where \(H\) is the homography matrix. <br>
 
-                This is a projective transformation.
-            </p>
+                This is a projective transformation, it is also a homography. <br>
 
-            <div class="note">
+                <div class="note">
                 <label>
                 Note that this matrix is still for transforming 2D cartesian coordinates, even though it is 3x3 itself.
                 the extra column and row accounts for the homogenous part.
@@ -252,6 +252,24 @@
 
                 $$ H = \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0& 0 & 1 & 0 \\ 0 & 0 & \frac{1}{d} & 0 \end{bmatrix}$$
             </p>
+
+            <h2> Some important insights from projective geometry </h2>
+            <p>
+                The ability to use matrices for projective transformations in homogenous space stems from
+                the homogenous space being invariant under projective transformations, i.e projective transformations are linear
+                (for the record semi-linear but that is a useless fact if you are not interested in generality) in a homogenous space. <br>
+
+                Another important fact you will hear throughout my blog: lines project to lines and polygons project to polygons.
+                This is due to the fundamental theorem of projective geometry, if we have a projective transformation: \(\pi\),
+                and three points \(p_1\), \(p_2\) and \(p_3\) then:
+
+                $$
+                (p_1, p_2, p_3) \in I \implies \big(\pi(p_1), \pi(p_2), \pi(p_3)\big) \in I
+                $$
+
+                Verbally: points that are collinear (on the same line, incident) when projected; are also collinear!
+
+            
         </section>
 
         <section class="textChunk", id="affine-transformations">
@@ -284,7 +302,7 @@
         <section class="textChunk" id="lines-and-projections">
             <h2>Lines and Their Projections</h2>
             <p> We all know what lines are, right? &#128515 <br>
-                Lines are of paramount importance for rasterization. You will understand more about why in the 
+                Lines are of paramount importance in rasterization. You will understand more about why in the 
                 perspective-correct-interpolation chapter. <br>
 
                 The most friendly and perhaps common way of modeling a line is through the equation:
@@ -376,6 +394,9 @@
 
                 Another very important conclusion is that since the projection of lines are again lines, the process of 
                 projecting a line can be done by projecting two points then drawing a line between the projected points without any further calculations.
+
+                This is actually one of the axioms from the fundamental theorem of projective geometry!
+
 
             </p>
         </section>
@@ -670,13 +691,13 @@
             vary linearly on the plane with respect to the barycentric coordinates \((\alpha, \beta, \gamma)\) but what happens to these parameters when we project the texture onto the plane?
             Well, as we have discussed extensively, each texel would divide by its \(z\) coordinate. Where \(z\) is also interpolated with the said parameters:
             $$
-            z = \omega_0 = \gamma C_z + \alpha A_z +\beta B_z
+            z = w_0 = \gamma C_z + \alpha A_z +\beta B_z
             $$
 
             where:
 
             $$
-            q_{proj}(\alpha, \beta, \gamma) = \begin{bmatrix} q_x \\ q_y \\ q_z \\ \omega_0 \end{bmatrix}
+            q_{proj}(\alpha, \beta, \gamma) = \begin{bmatrix} q_x \\ q_y \\ q_z \\ w_0 \end{bmatrix}
             $$
 
             and therefore:
@@ -728,11 +749,92 @@
             them with:
 
             $$
-             \frac{(1 - u - v) {T_0}_z + u {T_1}_z + v {T_2}_z}{d} = \omega_0
+             \frac{(1 - u - v) {T_0}_z + u {T_1}_z + v {T_2}_z}{d} = w_0
             $$
 
             then we get back the corresponding parameters used to interpolate the "unprojected" texture and therefore the corresponding texel: \(T(u, v)\)! Neat huh? Every shader does this to find the original parameters or coordinates on the projected primitive 
             to recover the "unprojected" attributes, like: texel coordinates, rgb values (e.g if you are interpolating RGB colors), surface normals etc. 
+
+            But we need to be more slick. \(u\) and \(v\) are in world space. I say it for the 67th time, we interpolate in screen space.
+            We need to use the barycentric coordinates in the viewport space to define an affine sum so that \(u' + v' + \gamma' = 1\).
+
+
+            In our case the three relevant projected corners are: \(\frac{T_0}{w_{1}}\), \(\frac{T_1}{w_{2}}\) and \(\frac{T_2}{w_{3}}\).
+
+            Where:
+             
+            $$
+            T_i = \begin{bmatrix} x_i \\ y_i \\ z_i \\ w_{i+1} \end{bmatrix}
+            $$
+
+            Which are the points we will interpolate on the viewport.
+
+            Then:
+
+            $$
+            T_{proj}(u, v) = \gamma'\frac{T_0}{w_{1}} + u'\frac{T_1}{w_{2}} + v'\frac{T_2}{w_{3}}
+            $$
+
+            Which, as we have seen, also equals to: 
+
+            $$
+            T_{proj}(u, v) = \frac{\gamma}{w_0}T_0 + \frac{u}{w_0}T_1+ \frac{v}{w_0}T_2
+            $$
+
+            $$
+            \implies \frac{\gamma}{w_0}T_0 + \frac{u}{w_0}T_1+ \frac{v}{w_0}T_2 = \gamma'\frac{T_0}{w_{1}} + u'\frac{T_1}{w_{2}} + v'\frac{T_2}{w_{2}}
+            $$
+
+            Then asserting each term we sum in each side is equal, we get:
+
+            $$
+             \gamma = \frac{w_0}{w_1} \gamma' \implies \frac{\gamma}{w_0} = \frac{1}{w_1} \gamma'
+            $$
+
+            And similarly:
+
+            $$
+            \frac{u}{w_0} = \frac{1}{w_2} u'
+            $$
+
+            $$
+            \frac{v}{w_0} = \frac{1}{w_3} v'
+            $$
+
+            Just to clarify if \(u' + v' + \gamma' = 1\) within our findings:
+
+            $$
+            u' + v' + \gamma' = \frac{w_2}{w_0} u + \frac{w_3}{w_0} v + \frac{w_1}{w_0} \gamma = \frac{w_0}{w_0} = 1
+            $$
+
+
+            Perfect! Now let's sum them all:
+
+            $$
+            \frac{\gamma}{w_0} + \frac{u}{w_0} + \frac{v}{w_0} = \gamma' \frac{1}{w_1}  + u' \frac{1}{w_2}  + v' \frac{1}{w_3}
+            $$
+
+            We only need to realize, now; because \(\gamma\), \(u\), and \(v\) are barycentric coordinates they sum up to \(1\):
+
+            $$
+            \frac{1}{w_0} = \gamma' \frac{1}{w_1}  + u' \frac{1}{w_12}  + v' \frac{1}{w_3}
+            $$
+
+            $$
+            w_0 = \bigg(\gamma' \frac{1}{w_1}  + u' \frac{1}{w_2}  + v' \frac{1}{w_3}\bigg)^{-1}
+            $$
+
+
+            Here you go! A fragment on the viewport is therefore related to the viewspace fragment:
+
+            $$
+            f_{vs} = f_{vp} \cdot \bigg(\gamma' \frac{1}{w_1}  + u' \frac{1}{w_2}  + v' \frac{1}{w_3}\bigg)^{-1}
+            $$
+        
+            We will use this formulation for texturing, lighting and whatnot! In the following chapters, 
+            fragment shading will be discussed in even more detail (while discussing triangle rasterization). 
+            We will talk about how we can find screen barycentric coordinates to get viewspace barycentrics (basically rasterization, 
+            interpolation).
             </p>
 
             <div class="note">
@@ -819,7 +921,7 @@
                 So for any non-homogenous coordinate \(u_c\) which is in the clip space (i.e \(x_c\), \(y_c\) or \(z_c\)):
                 
                 $$
-                u_{ndc} \cdot \omega_{c} =  u_{c}
+                u_{ndc} \cdot w_{c} =  u_{c}
                 $$
 
                 Start with \(x_e\). We want to normalize it to \([-1, 1]\) with respect to \([-\frac{W}{2}, \frac{W}{2}]\),
@@ -859,29 +961,29 @@
                 What about \(z_{ndc}\)? It is a little bit trickier. We want to map \(z_e\) to \(z_{ndc} \in [-1, 1]\),
                 but \(z_{ndc}(z_e)\) is non-linear with respect to \(z_e\)! <br>
 
-                Let's stop and breath for a moment and try to complete our projection matrix for \(x_c\), \(y_c\) and \(\omega_c\)
+                Let's stop and breath for a moment and try to complete our projection matrix for \(x_c\), \(y_c\) and \(w_c\)
 
                 $$
-                \mathbf{M}_{proj} \cdot P_{view} = \begin{bmatrix} x_c \\ z_c \\ z_c \\ \omega_c \end{bmatrix}
+                \mathbf{M}_{proj} \cdot P_{view} = \begin{bmatrix} x_c \\ z_c \\ z_c \\ w_c \end{bmatrix}
                 $$
                 $$
                 $$
                 $$
-                \implies \mathbf{M}_{proj} \cdot \begin{bmatrix} x_e \\ z_e \\ z_e \\ \omega_e \end{bmatrix}
-                 = \begin{bmatrix} x_c \\ z_c \\ z_c \\ \omega_c \end{bmatrix}
+                \implies \mathbf{M}_{proj} \cdot \begin{bmatrix} x_e \\ z_e \\ z_e \\ w_e \end{bmatrix}
+                 = \begin{bmatrix} x_c \\ z_c \\ z_c \\ w_c \end{bmatrix}
                 $$
 
                 We already derived \(x_c\) and \(y_c\):
 
                 $$
                 \begin{bmatrix} \frac{2}{W} & 0 & 0 & 0 \\ 0 & \frac{2}{H} & 0 & 0 \\ a_{1} & a_{2} & a_{3} & a_{4} \\ 0 & 0 & \frac{1}{n} & 0\end{bmatrix}
-                \cdot \begin{bmatrix} x_e \\ z_e \\ z_e \\ \omega_e \end{bmatrix} = \begin{bmatrix} x_c \\ z_c \\ z_c \\ \omega_c \end{bmatrix}
+                \cdot \begin{bmatrix} x_e \\ z_e \\ z_e \\ w_e \end{bmatrix} = \begin{bmatrix} x_c \\ z_c \\ z_c \\ w_c \end{bmatrix}
                 $$
 
                 Evidently, from matrix multiplication:
 
                 $$
-                z_c = a_1 x_e + a_2 y_e + a_3 z_e + a_4 \omega_e
+                z_c = a_1 x_e + a_2 y_e + a_3 z_e + a_4 w_e
                 $$
 
                 Since \(z_c\) is linearly independent from (does not depend on) \(x_e\) and \(y_e\):
@@ -893,7 +995,7 @@
                 and in view space our homogenous part is still \(1\): 
 
                 $$
-                \omega_e = 1
+                w_e = 1
                 $$
 
                 What remains is:
@@ -921,7 +1023,7 @@
                 We also know that:
 
                 $$
-                \mathcal{N}(z_e) = \frac{z_c}{\omega_c} = \frac{(a_3 z_e + a_4) n}{z_e}
+                \mathcal{N}(z_e) = \frac{z_c}{w_c} = \frac{(a_3 z_e + a_4) n}{z_e}
                 $$
 
                 If we find \(a_3\) and \(a_4\) we can find \(\mathcal{N}\). 
@@ -1010,20 +1112,142 @@
                 $$
                 </p>
 
+                <h2>How to clip points? </h2>
 
+                <p>
+
+                As we have seen the transformation to clip coordinates is characterized by the matrix multiplication:
+
+                $$
+                P_c = \mathbf{M}_{PV} \cdot P
+                $$
+
+                And as we have discussed we clip when:
+
+
+                $$
+                -1 > x_{ndc} \mid x_{ndc} > 1
+                $$
+                $$
+                -1 > y_{ndc} \mid y_{ndc} > 1
+                $$
+
+                $$
+                -1 > x_{ndc} \mid x_{ndc} > 1
+                $$
+
+                $$
+                -w_c > z_{c} \mid z_{c} > w_c
+                $$
+
+                We will discuss how to construct another polygon from a clipped one in a later implementation chapter.
+                </p>
+
+        </section>
+
+        <section class="textChunk" id="Rasterization">
+            <div class="note">
+                <label>
+                    Please acquaint yourself with
+                    <a href="https://en.wikipedia.org/wiki/Raster_graphics">raster</a> 
+                    and <a href="https://en.wikipedia.org/wiki/Vector_graphics">vector</a> graphics if you haven't already!
+                </label> 
+            </div>
+            <h2> What the heck does rasterization mean? </h2>
+            <p>
+                Rasterization is the process of rendering vector graphics on a raster display, such as an IPS monitor.
+                Almost all monitors, as of 2026, use raster displays to convey visual data. This means that the display, screen
+                is a 2 dimensional array of squares called "pixels". If you are perceptive enough, you might began to realize
+                this is kind of problematic. We defined geometry using coordinates that are continuous, but our screen has 
+                finite coordinates. So let's say I want to draw a line from the origin to any point \(P\) that is defined in the
+                continuous space of \(\mathbb{R}^2\). How do I do this? The answer to this question is (line) rasterization. <br>
+
+                The transformation from the real euclidean space to pixel, or raster space is as follows;
+                Any real coordinate \(P\) where \(P \in \mathbb{R}^2\) correspond to a pixel, which have integer coordinates.
+                So we can say that the transformation is:
+
+                $$
+                R: \mathbb{R}^2 \mapsto \mathbb{Z}^2
+                $$
+
+                We can define this mapping as:
+
+                $$
+                R = round(x), \ x \in \mathbb{R^2}
+                $$
+
+
+
+                The tragic collapse of continuity in a raster display! If you are familiar with with set theory; this isn't very suprising:
+                the set of \(\mathbb{Z}^2\) is countably infinite:
+                
+                $$
+                |\mathbb{Z}^2| = \aleph_0
+                $$
+                
+                whereas \(\mathbb{R}^2\) is uncountably infinite, meaning: even in 
+                a finite domain of \(\mathbb{R}^2\) there are infinite points, but in a finite domain of \(\mathbb{Z}^2\)
+                there are finite points! <br>
+                This results in data loss, as known as aliasing, due to the inability of processing floats.
+
+            </p>
+
+            <h2> A naive algorithm </h2>
+
+            <p>
+                Amidst this heart-braking data loss, there are algorithms that surf this wave of incompatibility,
+                I want to present a naive one.
+                Let me try to explain it very simply: <br>
+
+                Suppose we have 2 coordinates in our raster space: 
+
+                $$
+                p_1, \ p_2 \in \mathbb{Z}^2
+                $$
+
+                The vector from \(p_1\) to \(p_2\) is:
+
+                $$
+                \hat{u} = \frac{p_2 - p_1}{||(p_2 - p_1)||}
+                $$
+
+                We let  \(s := p_1\), then:
+
+                $$
+                s \leftarrow round(s + \hat{u})
+                $$
+                
+                Until \(s\) is \(p_2\) with a reasonable amount of margin of error. <br>
+                I will not discuss well established algorithms such as Bresenham's algorithm, as this is a trivial chapter,
+                and we will get into rasterization more comprehensively in the shading part.
+            </p>
+
+
+
+
+            <p>
+
+            </p>
+
+        </section>
+
+        <section class="textChunk" id="Shading">
+            <p> In this chapter I will start getting into the details of rasterization of triangles, and how shading is done, generally.
+                This chapter will probably be mathematically heavy.
+            </p>
+
+            <h2> What does shading mean, and what does a shader do?</h2>
+
+            
+
+            <h2>Vertex Shading</h2>
             
 
             <hr class="uc-hr"
             data-label="🚧 UNDER CONSTRUCTION — WIP AHEAD"
             aria-label="Under construction divider">
-
             <p>To be continued...</p>
-
         </section>
-
-
-        
-
 
         <footer>
 
